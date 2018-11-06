@@ -41,18 +41,6 @@
             game.physics.arcade.enable(ground);
             ground.body.immovable = true;
             ground.enableBody = true;
-            /*
-            block = game.add.sprite(100, 300, 'red_block');
-            game.physics.arcade.enable(block);
-            block.enableBody = true;
-
-
-            block2 = game.add.sprite(100, 100, 'blue_block');
-            game.physics.arcade.enable(block2);
-            block2.enableBody = true;
-
-            blocks.push(block2);
-            */
 
             blocks = game.add.group();
 
@@ -61,18 +49,6 @@
 
         }
 
-        function move2() {
-            blocks.forEach(function (b) {
-                b.body.moveTo(500, 200, Phaser.ANGLE_DOWN);
-                b.body.stopVelocityOnCollide = false;
-            });
-
-        }
-
-        function move(b) {
-            b.body.move(1000, 1000, Phaser.ANGLE_DOWN);
-            b.body.stopVelocityOnCollide = false;
-        }
 
         function update() {
 
