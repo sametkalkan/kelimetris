@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>hello phaser!</title>
+        <script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.min.js"></script>
+    </head>
+    <body>
+
+    <script type="text/javascript">
+
+
+    window.onload = function() {
+
+        //  Note that this html file is set to pull down Phaser 2.5.0 from the JS Delivr CDN.
+        //  Although it will work fine with this tutorial, it's almost certainly not the most current version.
+        //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
+
+        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+        var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
+
+        function preload () {
+
+            game.load.image('sky', 'assets/ground2.jpeg');
+            game.load.image('blue_block', 'assets/blue_block.png');
+            game.load.image('green_block', 'assets/green_block.png');
+            game.load.image('red_block', 'assets/red_block.png');
+            game.load.image('yellow_block', 'assets/yellow_block.png');
+            game.load.image('ground', 'assets/ground.png');
+
+        }
+
+        function create () {
+
+            game.physics.startSystem(Phaser.Physics.ARCADE);
+
+            game.add.sprite(0, 0, 'sky');
+
+            ground = game.add.sprite(0, game.world.height - 64  , 'ground');
+            game.physics.arcade.enable(ground);
+            ground.body.immovable = true;
+            ground.enableBody = true;
+            /*
+            block = game.add.sprite(100, 300, 'red_block');
+            game.physics.arcade.enable(block);
+            block.enableBody = true;
+
+
+            block2 = game.add.sprite(100, 100, 'blue_block');
+            game.physics.arcade.enable(block2);
+            block2.enableBody = true;
+
+            blocks.push(block2);
+            */
+
+            blocks = game.add.group();
+
+            init_blocks();
+
+
+        }
+
+        function move2() {
+            blocks.forEach(function (b) {
+                b.body.moveTo(500, 200, Phaser.ANGLE_DOWN);
+                b.body.stopVelocityOnCollide = false;
+            });
+
+        }
+
+        function move(b) {
+            b.body.move(1000, 1000, Phaser.ANGLE_DOWN);
+            b.body.stopVelocityOnCollide = false;
+        }
+
+        function update() {
+
+            hit1 = game.physics.arcade.collide(ground, blocks, collision_handler2);
+            hit2 = game.physics.arcade.collide(blocks, blocks, collision_handler);
+
+
+        }
+
+        function collision_handler2(ground, block){
+            block.body.immovable = true;
+        }
+
+        function collision_handler(block1, block2){
+            block1.body.immovable = true;
+            block2.body.immovable = true;
+
+        }
+
+        function init_blocks() {
+            for (let i=0; i<15; i++) {
+                setTimeout( function timer(){
+                    createBlocks(3);
+                }, i*500 );
+            }
+        }
+
+
+        function createBlocks(num) {
+
+            for (var i=0;i<num;i++){
+
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var x = Math.floor(Math.random() * game.world.width);
+
+                var block = blocks.create(x, 0, color);
+
+                game.physics.arcade.enable(block);
+                block.scale.setTo(0.5, 0.5);
+                block.enableBody = true;
+                block.bounce = 0;
+                block.body.velocity.y = 1000;
+            }
+        }
+
+
+    };
+
+    </script>
+
+    </body>
+</html>

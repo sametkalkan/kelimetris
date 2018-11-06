@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>hello phaser!</title>
+        <script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.min.js"></script>
+        <script src="https://examples.phaser.io/_site/phaser/phaser.2.2.2.box2d.min.js"></script>
+    </head>
+    <body>
+
+    <script type="text/javascript">
+
+
+    window.onload = function() {
+
+        //  Note that this html file is set to pull down Phaser 2.5.0 from the JS Delivr CDN.
+        //  Although it will work fine with this tutorial, it's almost certainly not the most current version.
+        //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
+
+        var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', { preload: preload, create: create, update: update });
+
+        var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
+
+        var blocks;
+        function preload () {
+
+            game.load.image('sky', 'assets/ground2.jpeg');
+            game.load.image('blue_block', 'assets/blue_block.png');
+            game.load.image('green_block', 'assets/green_block.png');
+            game.load.image('red_block', 'assets/red_block.png');
+            game.load.image('yellow_block', 'assets/yellow_block.png');
+            game.load.image('ground', 'assets/ground.png');
+
+        }
+
+        function create () {
+
+            game.physics.startSystem(Phaser.Physics.BOX2D);
+            game.physics.box2d.gravity.y = 500;
+            game.physics.box2d.friction = 0.9;
+
+            game.add.sprite(0, 0, 'sky');
+
+            // static platform
+
+            var ground = game.add.sprite(0, game.world.height - 25  , 'ground');
+            ground.scale.setTo(2, 0.5);
+            game.physics.box2d.enable(ground);
+            ground.body.static = true;
+
+
+            init_blocks();
+
+
+        }
+
+        function update() {
+
+            //hit = game.physics.arcade.collide(ground, blocks);
+        }
+        function render() {
+
+            game.debug.box2dWorld();
+
+        }
+        function collision_handler2(block, ground){
+        }
+
+        function collision_handler(block1, block2){
+
+
+
+        }
+
+        function init_blocks() {
+            for (let i=0; i<4; i++) {
+                setTimeout( function timer(){
+                    createBlocks(3);
+                }, i*500 );
+            }
+        }
+
+
+        function createBlocks(num) {
+
+            var sprite
+            for (var i = 0; i < num; i++)
+            {
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var x = Math.floor(Math.random() * game.world.width);
+                var sprite = game.add.sprite(x, 0, color);
+                sprite.scale.setTo(0.5, 0.5);
+                sprite.bounce = 0.5;
+                game.physics.box2d.enable(sprite);
+
+                // Set up callback so we are informed when this sprite touches the platforms
+            }
+        }
+
+
+
+    };
+
+    </script>
+
+    </body>
+</html>
