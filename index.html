@@ -16,10 +16,10 @@
         //  Although it will work fine with this tutorial, it's almost certainly not the most current version.
         //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
 
-        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+            var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
         var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
-
+        var block_size=224;
         function preload () {
 
             game.load.image('sky', 'assets/ground2.jpeg');
@@ -78,19 +78,26 @@
 
 
         function createBlocks(num) {
-
-            for (var i=0;i<num;i++){
+            var used=[];
+            var row_placer;
+            for (var i = 0; i < num; i++) {
 
                 var color = block_colors[Math.floor(Math.random() * 4)];
-                var x = Math.floor(Math.random() * game.world.width);
+                var x = Math.floor(Math.random() * ((game.world.width / block_size)-1));
+                row_placer = Math.random();
+                while (used.includes(x)) {
+                    x = Math.floor(Math.random() * ((game.world.width / block_size)-1));
 
-                var block = blocks.create(x, 0, color);
+                }
+                var block = blocks.create((x+row_placer) * block_size, 0, color);
 
                 game.physics.arcade.enable(block);
                 block.scale.setTo(0.5, 0.5);
                 block.enableBody = true;
                 block.bounce = 0;
                 block.body.velocity.y = 1000;
+                used.add(x);
+
             }
         }
 
