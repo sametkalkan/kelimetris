@@ -16,7 +16,7 @@
         //  Although it will work fine with this tutorial, it's almost certainly not the most current version.
         //  Be sure to replace it with an updated version before you start experimenting with adding your own code.
 
-            var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+            var game = new Phaser.Game(12*64+1, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
         var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
         var block_size=224;
@@ -71,7 +71,7 @@
             for (let i=0; i<5; i++) {
                 setTimeout( function timer(){
                     //createBlocks(8);
-                    createBlocks2(6);
+                    createBlocks2(7);
                 }, i*500 );
             }
         }
@@ -82,6 +82,9 @@
                 setTimeout( function timer(){
                     var width = 1 + Math.floor(Math.random() *3);
                     var height = 1 + Math.floor(Math.random() *2);
+
+                    if(sum*64+width*64>=game.world.width)
+                        return;
 
                     var color = block_colors[Math.floor(Math.random() * 4)];
                     var block = createBlock(sum*64, 0, width, height/2, color);
