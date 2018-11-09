@@ -23,10 +23,10 @@
         function preload () {
 
             game.load.image('sky', 'assets/ground2.jpeg');
-            game.load.image('blue_block', 'assets/blue_block.png');
-            game.load.image('green_block', 'assets/green_block.png');
-            game.load.image('red_block', 'assets/red_block.png');
-            game.load.image('yellow_block', 'assets/yellow_block.png');
+            game.load.image('blue_block', 'assets/blue_unit.png');
+            game.load.image('green_block', 'assets/green_unit.png');
+            game.load.image('red_block', 'assets/red_unit.png');
+            game.load.image('yellow_block', 'assets/yellow_unit.png');
             game.load.image('ground', 'assets/ground.png');
 
         }
@@ -55,7 +55,6 @@
             hit1 = game.physics.arcade.collide(ground, blocks, collision_handler2);
             hit2 = game.physics.arcade.collide(blocks, blocks, collision_handler);
 
-
         }
 
         function collision_handler2(ground, block){
@@ -69,14 +68,39 @@
         }
 
         function init_blocks() {
-            for (let i=0; i<15; i++) {
+            for (let i=0; i<5; i++) {
                 setTimeout( function timer(){
-                    createBlocks(3);
+                    //createBlocks(8);
+                    createBlocks2(6);
                 }, i*500 );
             }
         }
 
+        function createBlocks2(num) {
+            var sum = 0;
+            for (let i=0; i<num; i++) {
+                setTimeout( function timer(){
+                    var width = 1 + Math.floor(Math.random() *3);
+                    var height = 1 + Math.floor(Math.random() *2);
 
+                    var color = block_colors[Math.floor(Math.random() * 4)];
+                    var block = createBlock(sum*64, 0, width, height/2, color);
+                    sum+=width;
+                }, i*100 );
+            }
+
+        }
+
+        function createBlock(x, y, width, height, color) {
+            var block = blocks.create(x, y, color);
+
+            game.physics.arcade.enable(block);
+            block.scale.setTo(width, height);
+            block.enableBody = true;
+            block.bounce = 0;
+            block.body.velocity.y = 1000;
+            return block;
+        }
         function createBlocks(num) {
             var used=[];
             var row_placer;
@@ -92,7 +116,7 @@
                 var block = blocks.create((x+row_placer) * block_size, 0, color);
 
                 game.physics.arcade.enable(block);
-                block.scale.setTo(0.5, 0.5);
+                block.scale.setTo(1, 1);
                 block.enableBody = true;
                 block.bounce = 0;
                 block.body.velocity.y = 1000;
