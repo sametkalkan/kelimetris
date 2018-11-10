@@ -71,12 +71,12 @@
             for (let i=0; i<5; i++) {
                 setTimeout( function timer(){
                     //createBlocks(8);
-                    createBlocks2(7);
+                    createBlocks(7);
                 }, i*500 );
             }
         }
 
-        function createBlocks2(num) {
+        function createBlocks(num) {
             var sum = 0;
             for (let i=0; i<num; i++) {
                 setTimeout( function timer(){
@@ -103,29 +103,6 @@
             block.bounce = 0;
             block.body.velocity.y = 1000;
             return block;
-        }
-        function createBlocks(num) {
-            var used=[];
-            var row_placer;
-            for (var i = 0; i < num; i++) {
-
-                var color = block_colors[Math.floor(Math.random() * 4)];
-                var x = Math.floor(Math.random() * ((game.world.width / block_size)-1));
-                row_placer = Math.random();
-                while (used.includes(x)) {
-                    x = Math.floor(Math.random() * ((game.world.width / block_size)-1));
-
-                }
-                var block = blocks.create((x+row_placer) * block_size, 0, color);
-
-                game.physics.arcade.enable(block);
-                block.scale.setTo(1, 1);
-                block.enableBody = true;
-                block.bounce = 0;
-                block.body.velocity.y = 1000;
-                used.add(x);
-
-            }
         }
 
 
