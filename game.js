@@ -1,3 +1,5 @@
+
+
 window.onload = function() {
 
     var game = new Phaser.Game(12*64+1, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
@@ -26,9 +28,7 @@ window.onload = function() {
         ground.body.immovable = true;
         ground.enableBody = true;
 
-        blocks = []
-
-
+        blocks = [];
 
         init_blocks();
 
@@ -41,8 +41,18 @@ window.onload = function() {
         hit1 = game.physics.arcade.collide(ground, blocks, collision_handler2);
         hit2 = game.physics.arcade.collide(blocks, blocks, collision_handler);
 
-    }
+        // for (let i = 0; i <blocks.length; i++) {
+        //     neighbours(blocks[0]);
+        // }
 
+    }
+    // function neighbours(block) {
+    //     block.
+    // }
+    // function collision_handler3(block1,block2) {
+    //     console.log(block1.i +"-"+block2.i);
+    //
+    // }
     function collision_handler2(ground, block){
         block.body.immovable = true;
     }
@@ -89,8 +99,9 @@ window.onload = function() {
 
     function createBlock(x, y, width, height, color) {
         var block = game.add.sprite(x, y, color);
-
         game.physics.arcade.enable(block);
+        block.body.collideWorldBounds=true;
+        block.body.checkCollision=true;
         block.scale.setTo(width, height);
         block.enableBody = true;
         block.bounce = 0;
