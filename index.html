@@ -3,12 +3,90 @@
     <head>
         <meta charset="UTF-8" />
         <title>Kelimetris</title>
-        <script src="//cdn.jsdelivr.net/phaser/2.5.0/phaser.min.js"></script>
+        <script src="phaser.min.js"></script>
         <script type="text/javascript" src="game.js"></script>
+        <title>Kelimetris</title>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            body{
+                background-color: black;
+            }
+            #game{
+                position: relative;
+                margin-left: auto;
+                margin-right: auto;
+                width: 908px;
+            }
+            #keys{
+                color: white;
+                font-weight: bold;
+                top: 200px;
+                left: 160px;
+                display: none;
+                position: absolute;
+                padding: 15px;
+                background-image: url('assets/electric.jpg');
+            }
+            #keys div{
+                margin-right: 15px;
+                min-width: 100px;
+            }
+            #cup {
+                position: absolute;
+                display: none;
+                width: 128px;
+                height: 128px;
+                top: 500px;
+                left: 390px;
+            }
+            #name {
+                color: white;
+                font-weight: bold;
+                display: none;
+                background-image: url('assets/electric.jpg');
+                top: 400px;
+                left: 320px;
+                text-align: center;
+                width: 250px;
+                position: absolute;
+                padding: 15px;
+            }
+            input{
+                background-color: black;
+                color: white;
+                border: 1px solid white;
+                padding: 2px;
+            }
+        </style>
     </head>
     <body>
 
+    <script>
+        var config = {
+            type: Phaser.AUTO,
+            width: 12*64+1,
+            height: 600,
+            physics: {
+                default: 'arcade',
+                // arcade: {
+                //     gravity: { y: 200 }
+                // }
+            },
+            scene: {
+                preload: Game.preload, create: Game.create, update: Game.update
+            }
+        };
 
+        var game = new Phaser.Game(config);
+        game.state.add('Game',Game);
+
+        game.state.start('Game');
+
+
+    </script>
 
     </body>
 </html>

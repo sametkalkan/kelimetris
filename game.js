@@ -1,14 +1,45 @@
 
+var Game = {};
 
-window.onload = function() {
+// var game = new Phaser.Game(12*64+1, 600, Phaser.AUTO, '', { preload: Game.preload, create: Game.create, update: Game.update });
+var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
+var block_size=224;
+soundOnMove= true;
+// var timeOut = Phaser.Timer.SECOND; // Falling speed of the falling
 
-    var game = new Phaser.Game(12*64+1, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+Game.radio = { // object that stores sound-related information
+    soundOn : true,
+    moveSound : null,
+    gameOverSound : null,
+    winSound : null,
+    music : null,
+    // Play music if all conditions are met
+    playMusic : function(){
+        if(Game.radio.soundOn && !pauseState){
+            Game.radio.music.resume();
+        }
+    },
+    // Toggle sound on/off
+    manageSound : function(sprite){
+        sprite.frame = 1- sprite.frame;
+        Game.radio.soundOn = !Game.radio.soundOn;
+        if(Game.radio.soundOn){
+            Game.radio.playMusic();
+        }else{
+            Game.radio.music.pause();
+        }
+    },
+    // Play sound if all conditions are met
+    playSound : function(sound) {
+        if (Game.radio.soundOn && !pauseState) {
+            sound.play();
+        }
+    }
+};
 
-    var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
-    var block_size=224;
 
-
-    function preload () {
+window.onload = function() {};
+    Game.preload = function() {
 
         game.load.image('sky', 'assets/ground2.jpeg');
         game.load.image('blue_block', 'assets/blue_unit.png');
@@ -16,29 +47,45 @@ window.onload = function() {
         game.load.image('red_block', 'assets/red_unit.png');
         game.load.image('yellow_block', 'assets/yellow_unit.png');
         game.load.image('ground', 'assets/ground.png');
+        //-------------------------audio---------------------------------
+        game.load.audio('move','assets/sound/move.mp3','assets/sound/move.ogg');
 
-    }
 
-    function create () {
+    };
 
-        game.physics.startSystem(Phaser.Physics.ARCADE);
+    Game.create = function(){
 
+        // game.physics.startSystem(Phaser.Physics.ARCADE);
+        pauseState = false;
+        gameOverState = false;
+        // Sound on/off icon
+        var sound = game.add.sprite(game.world.width-38, 0, 'sound', 0);
+        sound.inputEnabled = true;
+        sound.events.onInputDown.add(Game.radio.manageSound, this);
         game.add.sprite(0, 0, 'sky');
+        Game.radio.moveSound = game.add.audio('move');
+        Game.radio.winSound = game.add.audio('win');
+        Game.radio.gameOverSound = game.add.audio('gameover');
+        Game.radio.music = game.add.audio('music');
+        Game.radio.music.volume = 0.2;
+        Game.radio.music.loopFull();
 
         ground = game.add.sprite(0, game.world.height - 64  , 'ground');
         game.physics.arcade.enable(ground);
         ground.body.immovable = true;
         ground.enableBody = true;
 
-
+        var sound = game.add.sprite(game.world.width-38, 0, 'sound', 0);
+        sound.inputEnabled = true;
+        sound.events.onInputDown.add(Game.radio.manageSound, this);
         blocks = [];
 
         init_blocks();
 
-    }
+    };
 
 
-    function update() {
+    Game.update = function() {
 
         hit1 = game.physics.arcade.collide(ground, blocks, collision_handler2);
         hit2 = game.physics.arcade.collide(blocks, blocks, collision_handler);
@@ -47,7 +94,8 @@ window.onload = function() {
         //     neighbours(blocks[0]);
         // }
 
-    }
+    };
+
     // function neighbours(block) {
     //     block.
     // }
@@ -89,6 +137,9 @@ window.onload = function() {
             //console.log(blocks_to_be_killed[i].i);
             blocks_to_be_killed[i].kill();
         }
+        Game.radio.playSound(Game.radio.moveSound);
+
+
         makeMovable();
     }
 
@@ -272,4 +323,3 @@ window.onload = function() {
     }
 
 
-};
