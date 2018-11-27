@@ -68,6 +68,16 @@ window.onload = function() {
     }
 
     /**
+     * falls blocks over the killed blocks.
+     */
+    function makeMovable() {
+        for(var i=0;i<blocks.length;i++){
+            blocks[i].body.immovable = false;
+            blocks[i].body.velocity.y = 300;
+        }
+    }
+
+    /**
      * tıklanan blokla aynı renkteki tüm blokları siler.
      * @param block
      */
@@ -75,11 +85,11 @@ window.onload = function() {
 
         var same_color_blocks = findSameColorBlock(block);  // aynı renkteki blokları getirir.
         var blocks_to_be_killed = findNeighborsChain(block, same_color_blocks);
-
         for(var i=0;i<blocks_to_be_killed.length;i++){
             //console.log(blocks_to_be_killed[i].i);
             blocks_to_be_killed[i].kill();
         }
+        makeMovable();
     }
 
 
