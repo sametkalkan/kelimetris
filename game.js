@@ -102,7 +102,7 @@ Game.create = function () {
     // scoreText.x = center - (scoreText.textWidth * 0.5);
     // 7 column 5 row create from the beginning 700ms
 
-    var ldb = game.add.bitmapText(game.world.centerX, 80, 'videogame', 'LEADERBOARD',64);
+    // var ldb = game.add.bitmapText(game.world.centerX, 80, 'videogame', 'LEADERBOARD',64);
 
     init_blocks(5, 7, 700, false);
 
