@@ -8,6 +8,8 @@ soundOnMove= true;
 // var timeOut = Phaser.Timer.SECOND; // Falling speed of the falling
 var scoreTitle, scoreText, timer, loop;
 
+words = [];
+
 Game.radio = { // object that stores sound-related information
     soundOn : true,
     moveSound : null,
@@ -51,7 +53,7 @@ Game.preload = function () {
 
     game.load.bitmapFont('desyrel', 'assets/fonts/desyrel.png', 'assets/fonts/desyrel.xml');
     //-------------------------audio---------------------------------
-        game.load.audio('move','assets/sound/move.mp3','assets/sound/move.ogg');
+    game.load.audio('move','assets/sound/move.mp3','assets/sound/move.ogg');
     game.load.spritesheet('sound', 'assets/sound.png', 32, 32); // Icon to turn sound on/off
     game.load.audio('move', 'assets/sound/move.mp3', 'assets/sound/move.ogg');
     game.load.audio('win', 'assets/sound/win.mp3', 'assets/sound/win.ogg');
@@ -60,6 +62,7 @@ Game.preload = function () {
 
 
     };
+
 
 Game.create = function () {
 
@@ -92,14 +95,18 @@ Game.create = function () {
     Game.radio.music.loopFull();
 
 
-    scoreTitle = game.add.bitmapText(20, 5, 'desyrel', 'Score', 30);
-    scoreText = game.add.bitmapText(60, 32, 'desyrel', '0', 30);
-    scoreText.text = '0';
-    var center = scoreTitle.x + scoreTitle.textWidth / 2;
-    scoreText.x = center - (scoreText.textWidth * 0.5);
+    // scoreTitle = game.add.bitmapText(20, 5, 'desyrel', 'Score', 30);
+    // scoreText = game.add.bitmapText(60, 32, 'desyrel', '0', 30);
+    // scoreText.text = '0';
+    // var center = scoreTitle.x + scoreTitle.textWidth / 2;
+    // scoreText.x = center - (scoreText.textWidth * 0.5);
     // 7 column 5 row create from the beginning 700ms
+
+    var ldb = game.add.bitmapText(game.world.centerX, 80, 'videogame', 'LEADERBOARD',64);
+
     init_blocks(5, 7, 700, false);
 
+    getWords();
 };
 
 
@@ -307,17 +314,18 @@ Game.update = function () {
     }
 
 
-function init_blocks(row, column, wait, random) {
+
+function init_blocks(row, column, wait) {
     for (let i = 0; i < row; i++) {
             setTimeout( function timer(){
                 //createBlocks(8);
-                createBlocks(column, i, random);
+                createBlocks(column, i);
             }, i * wait);
         }
     }
 
 //TODO issue after killing the block new blocks appear always at the beginning to avoid this wwe can add random flog to the function
-function createBlocks(num, j, random) {
+function createBlocks(num, j) {
     var sum = 0;
         for (let i=0; i<num; i++) {
             setTimeout( function timer(){
@@ -330,25 +338,29 @@ function createBlocks(num, j, random) {
                 var color = block_colors[Math.floor(Math.random() * 4)];
                 var block = createBlock(sum*64, 0, width, height/2, color);
 
-                block.i = i + ","+j;
-                var text = game.add.text(0, block.height/2, i+"," +j, {font: "20px Arial", fill: "#ffffff"});
+                // block.i = i + ","+j;
+                // var text = game.add.text(0, block.height/2, i+"," +j, {font: "20px Arial", fill: "#ffffff"});
 
-                block.addChild(text);
+                // block.addChild(text);
                 blocks.push(block);
 
                 sum+=width;
             }, i*100 );
         }
-
     }
 
     function createBlock(x, y, width, height, color) {
+
+        //TODO kelimenin boyutuna göre uygun kutu boyutu çağırılacak. ama önce png dosyası hazırlanmalı
+
         var block = game.add.sprite(x, y, color);
         game.physics.arcade.enable(block);
         block.inputEnabled = true;
         block.events.onInputDown.add(blockClick, this);
         block.body.collideWorldBounds=true;
         block.body.checkCollision=true;
+        addWordToBlock(block);
+
         block.scale.setTo(width, height);
         block.enableBody = true;
         block.bounce = 0;
@@ -358,4 +370,52 @@ function createBlocks(num, j, random) {
         return block;
     }
 
+function getWords() {
+    var path = "assets/words.txt";
 
+    words = "masa\n" +
+        "tahta\n" +
+        "kalem\n" +
+        "silgi\n" +
+        "pencere\n" +
+        "kablo\n" +
+        "ahtapot\n" +
+        "kedi\n" +
+        "köpek\n" +
+        "endüstri\n" +
+        "tabela\n" +
+        "rozet\n" +
+        "mouse\n" +
+        "bayrak\n" +
+        "koltuk\n" +
+        "kanepe\n" +
+        "televizyon\n" +
+        "bina\n" +
+        "inşaat\n" +
+        "vinç\n" +
+        "perde\n" +
+        "saat\n" +
+        "lastik\n" +
+        "teker\n" +
+        "tekerlek\n" +
+        "tuş\n" +
+        "askı\n" +
+        "turşu\n" +
+        "patlıcan\n" +
+        "domates\n" +
+        "biber\n" +
+        "kumanda\n" +
+        "asker\n" +
+        "hırka"
+
+    this.words = words.split("\n");
+}
+
+function addWordToBlock(block) {
+
+        var i = Math.floor(Math.random()*words.length);
+        var content = words[i];
+        var text = game.add.text(block.width/10, block.height/3, content, {font: "20px Arial", fill: "#ffffff", align: "center"});
+        block.addChild(text);
+        // block.setText(text);
+}
