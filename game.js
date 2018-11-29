@@ -4,6 +4,7 @@ var Game = {};
 var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
 
 var scoreTitle, scoreText, timer, loop;
+var score = 0;
 
 var words = [];
 
@@ -39,7 +40,6 @@ Game.create = function () {
 Game.update = function () {
         game.physics.arcade.collide(ground, blocks, collision_handler2);
         game.physics.arcade.collide(blocks, blocks, collision_handler);
-
 };
 
     function collision_handler2(ground, block){
@@ -82,11 +82,10 @@ Game.update = function () {
             //
 
             blocks_to_be_killed[i].kill();
-
+            score += 50;
         }
         Game.radio.playSound(Game.radio.winSound);
-
-
+        this.scoreText.setText(score);
         makeMovable();
 
         createBlocks(3);
