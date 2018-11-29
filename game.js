@@ -7,6 +7,7 @@ var block_size=224;
 soundOnMove= true;
 // var timeOut = Phaser.Timer.SECOND; // Falling speed of the falling
 var scoreTitle, scoreText, timer, loop;
+var score = 0;
 
 words = [];
 
@@ -114,7 +115,6 @@ Game.update = function () {
 
         hit1 = game.physics.arcade.collide(ground, blocks, collision_handler2);
         hit2 = game.physics.arcade.collide(blocks, blocks, collision_handler);
-
         // for (let i = 0; i <blocks.length; i++) {
         //     neighbours(blocks[0]);
         // }
@@ -136,7 +136,7 @@ Game.update = function () {
         block1.body.immovable = true;
         block2.body.immovable = true;
 
-        console.log(block1.i +"-"+block2.i);
+        //console.log(block1.i +"-"+block2.i);
 
     }
 
@@ -170,11 +170,10 @@ Game.update = function () {
             //
 
             blocks_to_be_killed[i].kill();
-
+            score += 50;
         }
         Game.radio.playSound(Game.radio.winSound);
-
-
+        this.scoreText.setText(score);
         makeMovable();
         init_blocks(1, 3, 50000, true);
 
