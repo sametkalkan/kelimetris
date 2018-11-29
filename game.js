@@ -29,7 +29,7 @@ Game.create = function () {
 
     createSounds();  // creates the sounds
 
-    init_blocks(5, 7, 700, false);
+    init_blocks(5, 8, 700);
 
     getWords();
 
@@ -57,7 +57,7 @@ Game.update = function () {
     function makeMovable() {
         for(var i=0;i<blocks.length;i++){
             blocks[i].body.immovable = false;
-            blocks[i].body.velocity.y = 700;
+            blocks[i].body.velocity.y = 300;
         }
     }
 
@@ -88,9 +88,8 @@ Game.update = function () {
 
 
         makeMovable();
-        init_blocks(1, 3, 700, true);
 
-        //bring 3 brand new blocks
+        createBlocks(3);
 
         blocks.inputEnabled = true;
 
@@ -237,27 +236,27 @@ Game.update = function () {
 function init_blocks(row, column, wait) {
     for (let i = 0; i < row; i++) {
             setTimeout( function timer(){
-                //createBlocks(8);
-                createBlocks(column, i);
+                createBlocks(column);
             }, i * wait);
         }
     }
 
 //TODO issue after killing the block new blocks appear always at the beginning to avoid this wwe can add random flog to the function
-function createBlocks(num, j) {
+function createBlocks(num) {
     var sum = 0;
         for (let i=0; i<num; i++) {
             setTimeout( function timer(){
                 var height = 1 + Math.floor(Math.random() * 2);
                 var word = findWord();
                 var width;
+
+                /* to determine block width */
                 if(word.length<=4)
                     width = 1;
                 else if(word.length<=10)
                     width = 2;
                 else if(word.length<=15)
                     width = 3;
-
 
                 if(sum*64+width*64>=game.world.width)
                     return;
@@ -317,7 +316,7 @@ function findWord() {
 
 function getWords() {
     var path = "assets/words.txt";
-
+    //TODO words must be fetched via query
     words = "masa\n" +
         "tahta\n" +
         "kalem\n" +
