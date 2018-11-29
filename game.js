@@ -95,11 +95,11 @@ Game.create = function () {
     Game.radio.music.loopFull();
 
 
-    // scoreTitle = game.add.bitmapText(20, 5, 'desyrel', 'Score', 30);
-    // scoreText = game.add.bitmapText(60, 32, 'desyrel', '0', 30);
-    // scoreText.text = '0';
-    // var center = scoreTitle.x + scoreTitle.textWidth / 2;
-    // scoreText.x = center - (scoreText.textWidth * 0.5);
+    scoreTitle = game.add.bitmapText(20, 5, 'desyrel', 'Score', 30);
+    scoreText = game.add.bitmapText(60, 32, 'desyrel', '0', 30);
+    scoreText.text = '0';
+    var center = scoreTitle.x + scoreTitle.textWidth / 2;
+    scoreText.x = center - (scoreText.textWidth * 0.5);
     // 7 column 5 row create from the beginning 700ms
 
     // var ldb = game.add.bitmapText(game.world.centerX, 80, 'videogame', 'LEADERBOARD',64);
@@ -359,9 +359,10 @@ function createBlocks(num, j) {
         block.events.onInputDown.add(blockClick, this);
         block.body.collideWorldBounds=true;
         block.body.checkCollision=true;
-        addWordToBlock(block);
+
 
         block.scale.setTo(width, height);
+        addWordToBlock(block);
         block.enableBody = true;
         block.bounce = 0;
         block.body.velocity.y = 500;
@@ -415,7 +416,8 @@ function addWordToBlock(block) {
 
         var i = Math.floor(Math.random()*words.length);
         var content = words[i];
-        var text = game.add.text(block.width/10, block.height/3, content, {font: "20px Arial", fill: "#ffffff", align: "center"});
+        var text = game.add.text(block.width/10, block.height/3, content, {font: "20px Times New Roman", fill: "#ffffff", align: "center"});
+        text.scale.setTo(1/(block.width/64), 1/(block.height/64));
         block.addChild(text);
         // block.setText(text);
 }
