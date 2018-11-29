@@ -14,13 +14,16 @@ var sound;  // background music
 
 var wordLabel;  // label on the ground
 
+
 Game.preload = function () {
 
-        game.add.plugin(PhaserInput.Plugin);  // input plugin
+
         loadElements();
 };
 
 Game.create = function () {
+
+    game.add.plugin(PhaserInput.Plugin);
 
     createElements();
 
