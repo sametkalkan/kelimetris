@@ -1,133 +1,44 @@
 
 var Game = {};
 
-// var game = new Phaser.Game(12*64+1, 600, Phaser.AUTO, '', { preload: Game.preload, create: Game.create, update: Game.update });
 var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
-var block_size=224;
-soundOnMove= true;
-// var timeOut = Phaser.Timer.SECOND; // Falling speed of the falling
+
 var scoreTitle, scoreText, timer, loop;
 
-words = [];
+var words = [];
 
-Game.radio = { // object that stores sound-related information
-    soundOn : true,
-    moveSound : null,
-    gameOverSound : null,
-    winSound : null,
-    music : null,
-    // Play music if all conditions are met
-    playMusic : function(){
-        if(Game.radio.soundOn && !pauseState){
-            Game.radio.music.resume();
-        }
-    },
-    // Toggle sound on/off
-    manageSound : function(sprite){
-        sprite.frame = 1- sprite.frame;
-        Game.radio.soundOn = !Game.radio.soundOn;
-        if(Game.radio.soundOn){
-            Game.radio.playMusic();
-        }else{
-            Game.radio.music.pause();
-        }
-    },
-    // Play sound if all conditions are met
-    playSound : function(sound) {
-        if (Game.radio.soundOn && !pauseState) {
-            sound.play();
-        }
-    }
-};
+var blocks = [];  // existing block on the screen
 
-var userInput;
-window.onload = function() {};
+var ground;
+var sound;  // background music
+
+var wordLabel;  // label on the ground
+
 Game.preload = function () {
 
-        game.load.image('sky', 'assets/ground2.jpeg');
-        game.load.image('blue_block', 'assets/blue_unit.png');
-        game.load.image('green_block', 'assets/green_unit.png');
-        game.load.image('red_block', 'assets/red_unit.png');
-        game.load.image('yellow_block', 'assets/yellow_unit.png');
-        game.load.image('ground', 'assets/ground.png');
-
-    game.load.bitmapFont('desyrel', 'assets/fonts/desyrel.png', 'assets/fonts/desyrel.xml');
-    //-------------------------audio---------------------------------
-    game.load.audio('move','assets/sound/move.mp3','assets/sound/move.ogg');
-    game.load.spritesheet('sound', 'assets/sound.png', 32, 32); // Icon to turn sound on/off
-    game.load.audio('move', 'assets/sound/move.mp3', 'assets/sound/move.ogg');
-    game.load.audio('win', 'assets/sound/win.mp3', 'assets/sound/win.ogg');
-    game.load.audio('gameover', 'assets/sound/gameover.mp3', 'assets/sound/gameover.ogg');
-    game.load.audio('music', 'assets/sound/tetris.mp3'); // load music now so it's loaded by the time the game starts
-
-
-    };
-
+        game.add.plugin(PhaserInput.Plugin);  // input plugin
+        loadElements();
+};
 
 Game.create = function () {
 
-        // game.physics.startSystem(Phaser.Physics.ARCADE);
-        pauseState = false;
-        gameOverState = false;
-        // Sound on/off icon
-        var sound = game.add.sprite(game.world.width-38, 0, 'sound', 0);
-        sound.inputEnabled = true;
-        sound.events.onInputDown.add(Game.radio.manageSound, this);
-        game.add.sprite(0, 0, 'sky');
+    createElements();
 
-
-        ground = game.add.sprite(0, game.world.height - 64  , 'ground');
-        game.physics.arcade.enable(ground);
-        ground.body.immovable = true;
-        ground.enableBody = true;
-    //----------------- add sound--------------------
-        var sound = game.add.sprite(game.world.width-38, 0, 'sound', 0);
-        sound.inputEnabled = true;
-        sound.events.onInputDown.add(Game.radio.manageSound, this);
-
-        blocks = [];
-    //-----------------add the sounds to the game--------------------
-    Game.radio.moveSound = game.add.audio('move');
-    Game.radio.winSound = game.add.audio('win');
-    Game.radio.gameOverSound = game.add.audio('gameover');
-    Game.radio.music = game.add.audio('music');
-    Game.radio.music.volume = 0.2;
-    Game.radio.music.loopFull();
-
-
-    scoreTitle = game.add.bitmapText(20, 5, 'desyrel', 'Score', 30);
-    scoreText = game.add.bitmapText(60, 32, 'desyrel', '0', 30);
-    scoreText.text = '0';
-    var center = scoreTitle.x + scoreTitle.textWidth / 2;
-    scoreText.x = center - (scoreText.textWidth * 0.5);
-    // 7 column 5 row create from the beginning 700ms
-
-    // var ldb = game.add.bitmapText(game.world.centerX, 80, 'videogame', 'LEADERBOARD',64);
+    createSounds();  // creates the sounds
 
     init_blocks(5, 7, 700, false);
 
     getWords();
+
 };
 
 
 Game.update = function () {
-
-        hit1 = game.physics.arcade.collide(ground, blocks, collision_handler2);
-        hit2 = game.physics.arcade.collide(blocks, blocks, collision_handler);
-
-        // for (let i = 0; i <blocks.length; i++) {
-        //     neighbours(blocks[0]);
-        // }
+        game.physics.arcade.collide(ground, blocks, collision_handler2);
+        game.physics.arcade.collide(blocks, blocks, collision_handler);
 
 };
 
-    // function neighbours(block) {
-    //     block.
-    // }
-    // function collision_handler3(block1,block2) {
-    //     console.log(block1.i +"-"+block2.i);
-    //
-    // }
     function collision_handler2(ground, block){
         block.body.immovable = true;
     }
@@ -135,9 +46,6 @@ Game.update = function () {
     function collision_handler(block1, block2){
         block1.body.immovable = true;
         block2.body.immovable = true;
-
-        console.log(block1.i +"-"+block2.i);
-
     }
 
     /**
@@ -158,6 +66,7 @@ Game.update = function () {
         blocks.inputEnabled = false;
         var same_color_blocks = findSameColorBlock(block);  // aynı renkteki blokları getirir.
         var blocks_to_be_killed = findNeighborsChain(block, same_color_blocks);
+
         for(var i=0;i<blocks_to_be_killed.length;i++){
             //console.log(blocks_to_be_killed[i].i);
             // var tween = game.add.tween(sceneSprites[k][line]);
@@ -176,13 +85,20 @@ Game.update = function () {
 
 
         makeMovable();
-        init_blocks(1, 3, 50000, true);
+        init_blocks(1, 3, 700, true);
 
         //bring 3 brand new blocks
 
         blocks.inputEnabled = true;
 
     }
+
+    function findSimilarity(word) {
+        wordLabel.setText(word);
+    }
+
+
+
 
 
     /**
@@ -329,19 +245,23 @@ function createBlocks(num, j) {
     var sum = 0;
         for (let i=0; i<num; i++) {
             setTimeout( function timer(){
-                var width = 1 + Math.floor(Math.random() *3);
-                var height = 1 + Math.floor(Math.random() *2);
+                var height = 1 + Math.floor(Math.random() * 2);
+                var word = findWord();
+                var width;
+                if(word.length<=4)
+                    width = 1;
+                else if(word.length<=10)
+                    width = 2;
+                else if(word.length<=15)
+                    width = 3;
+
 
                 if(sum*64+width*64>=game.world.width)
                     return;
 
                 var color = block_colors[Math.floor(Math.random() * 4)];
-                var block = createBlock(sum*64, 0, width, height/2, color);
+                var block = createBlock(sum*64, 0, width, height/2, color, word);
 
-                // block.i = i + ","+j;
-                // var text = game.add.text(0, block.height/2, i+"," +j, {font: "20px Arial", fill: "#ffffff"});
-
-                // block.addChild(text);
                 blocks.push(block);
 
                 sum+=width;
@@ -349,9 +269,7 @@ function createBlocks(num, j) {
         }
     }
 
-    function createBlock(x, y, width, height, color) {
-
-        //TODO kelimenin boyutuna göre uygun kutu boyutu çağırılacak. ama önce png dosyası hazırlanmalı
+    function createBlock(x, y, width, height, color, word) {
 
         var block = game.add.sprite(x, y, color);
         game.physics.arcade.enable(block);
@@ -360,16 +278,39 @@ function createBlocks(num, j) {
         block.body.collideWorldBounds=true;
         block.body.checkCollision=true;
 
-
         block.scale.setTo(width, height);
-        addWordToBlock(block);
         block.enableBody = true;
         block.bounce = 0;
         block.body.velocity.y = 500;
         block.color = color;
 
+        addWordToBlock(block, word);
+
         return block;
     }
+
+function addWordToBlock(block, word) {
+
+    var word_width = 12.8*word.length;
+
+    var style = { font: "20px Arial", fill: "#ffffff", wordWrap: true, wordWrapWidth: block.width, align: "center"};
+
+
+    var text = game.add.text(10, block.height/3, word, style);
+    text.scale.setTo(1/(block.width/64), 1/(block.height/64));
+    block.addChild(text);
+
+}
+
+function findWord() {
+
+        if(Math.floor(Math.random()*3)==1)  // for empty blocks
+            return "";
+
+        var i = Math.floor(Math.random()*words.length);
+        var content = words[i];
+        return content;
+}
 
 function getWords() {
     var path = "assets/words.txt";
@@ -412,12 +353,4 @@ function getWords() {
     this.words = words.split("\n");
 }
 
-function addWordToBlock(block) {
 
-        var i = Math.floor(Math.random()*words.length);
-        var content = words[i];
-        var text = game.add.text(block.width/10, block.height/3, content, {font: "20px Times New Roman", fill: "#ffffff", align: "center"});
-        text.scale.setTo(1/(block.width/64), 1/(block.height/64));
-        block.addChild(text);
-        // block.setText(text);
-}
