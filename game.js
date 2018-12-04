@@ -80,7 +80,16 @@ Game.update = function () {
             // scene[k][line] = 0;
             // delay += 50; // For each block, start the tween 50ms later so they move wave-like
             //
+            // blocks_to_be_killed[i].body.collideWorldBounds=false;
+            // blocks_to_be_killed[i].body.checkCollision=false;
+            var killTween = game.add.tween(blocks_to_be_killed[i].scale);
+            killTween.to({x:game.width,y:0}, 200, Phaser.Easing.Linear.None);
+            // killTween.onComplete.addOnce(function(){
+            //     blocks_to_be_killed[i].kill();
+            //
+            // }, this);
 
+            killTween.start();
             blocks_to_be_killed[i].kill();
             score += 50;
         }
