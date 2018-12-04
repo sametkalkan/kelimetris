@@ -82,17 +82,22 @@ Game.update = function () {
             //
             // blocks_to_be_killed[i].body.collideWorldBounds=false;
             // blocks_to_be_killed[i].body.checkCollision=false;
-            var killTween = game.add.tween(blocks_to_be_killed[i].scale);
-            killTween.to({x:game.width,y:0}, 200, Phaser.Easing.Linear.None);
-            // killTween.onComplete.addOnce(function(){
-            //     blocks_to_be_killed[i].kill();
-            //
-            // }, this);
+            var kill_block = blocks_to_be_killed[i];
+            var killTween = game.add.tween(kill_block.scale);
+            killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Bounce.Out);
+            killTween.onComplete.addOnce(function () {
+                kill_block.kill();
+
+            }, this);
 
             killTween.start();
-            blocks_to_be_killed[i].kill();
+            // blocks_to_be_killed[i].kill();
             score += 50;
         }
+
+        blocks = blocks.filter((el) => !blocks_to_be_killed.includes(el));
+
+
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
         makeMovable();
