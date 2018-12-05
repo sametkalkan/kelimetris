@@ -109,7 +109,7 @@ Game.update = function () {
         this.scoreText.setText(score);
         makeMovable();
 
-        createBlocks(3);
+        createNextBlocks(Math.floor(Math.random() * 4) + 2);
 
         blocks.inputEnabled = true;
 
@@ -258,6 +258,35 @@ function init_blocks(row, column, wait) {
             setTimeout( function timer(){
                 createBlocks(column);
             }, i * wait);
+        }
+    }
+
+function createNextBlocks(num) {
+    var sum = Math.floor(Math.random() * 5);
+        for (let i=0; i<num; i++) {
+            setTimeout( function timer(){
+                var height = 1 + Math.floor(Math.random() * 2);
+                var word = findWord();
+                var width;
+
+                /* to determine block width */
+                if(word.length<=4)
+                    width = 1;
+                else if(word.length<=10)
+                    width = 2;
+                else if(word.length<=15)
+                    width = 3;
+
+                if(sum*64+width*64>=game.world.width)
+                    return;
+
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var block = createBlock(sum*64, 0, width, height/2, color, word);
+
+                blocks.push(block);
+
+                sum+=width;
+            }, i*100 );
         }
     }
 
