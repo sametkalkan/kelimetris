@@ -1,6 +1,13 @@
 
 var Game = {};
 
+var menuWidth = 300;
+var blockSize = 64; // px
+var numBlocksY = 12; // make the grid 19 blocks high
+var numBlocksX = 12; // make the grid 19 blocks wide
+var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
+
+
 var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
 
 var scoreTitle, scoreText, timer, loop;
@@ -84,7 +91,7 @@ Game.update = function () {
             // blocks_to_be_killed[i].body.checkCollision=false;
             var kill_block = blocks_to_be_killed[i];
             var killTween = game.add.tween(kill_block.scale);
-            killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Bounce.Out);
+            killTween.to({x: 0, y: 0}, 500, Phaser.Easing.Bounce.Out);
             killTween.onComplete.addOnce(function () {
                 kill_block.kill();
 
