@@ -29,6 +29,10 @@ Game.radio = { // object that stores sound-related information
 };
 
 function loadElements() {
+    //------------full screen-----------
+    // game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    // game.scale.pageAlignHorizontally = true;
+    // game.scale.pageAlignVertically = true;
         loadImages();
         loadSounds();
 }
@@ -106,11 +110,11 @@ function createTextBox() {
         font: '18px Arial',
         fill: '#212121',
         fontWeight: 'bold',
-        width: game.width,
+        width: game.width-13,
         padding: 5,
         borderWidth: 1,
         borderColor: '#000',
-        borderRadius: 6,
+        borderRadius: 7,
         placeHolder: 'Type and press enter',
         type: PhaserInput.InputType.text,
         focusOutOnEnter: true,

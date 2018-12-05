@@ -1,6 +1,13 @@
 
 var Game = {};
 
+var menuWidth = 300;
+var blockSize = 64; // px
+var numBlocksY = 12; // make the grid 19 blocks high
+var numBlocksX = 12; // make the grid 19 blocks wide
+var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
+
+
 var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
 
 var scoreTitle, scoreText, timer, loop;
@@ -80,10 +87,24 @@ Game.update = function () {
             // scene[k][line] = 0;
             // delay += 50; // For each block, start the tween 50ms later so they move wave-like
             //
+            // blocks_to_be_killed[i].body.collideWorldBounds=false;
+            // blocks_to_be_killed[i].body.checkCollision=false;
+            var kill_block = blocks_to_be_killed[i];
+            var killTween = game.add.tween(kill_block.scale);
+            killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
+            killTween.onComplete.addOnce(function () {
+                kill_block.kill();
 
-            blocks_to_be_killed[i].kill();
+            }, this);
+
+            killTween.start();
+            // blocks_to_be_killed[i].kill();
             score += 50;
         }
+
+        blocks = blocks.filter((el) => !blocks_to_be_killed.includes(el));
+
+
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
         makeMovable();
