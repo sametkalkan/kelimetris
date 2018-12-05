@@ -91,7 +91,7 @@ Game.update = function () {
             // blocks_to_be_killed[i].body.checkCollision=false;
             var kill_block = blocks_to_be_killed[i];
             var killTween = game.add.tween(kill_block.scale);
-            killTween.to({x: 0, y: 0}, 500, Phaser.Easing.Bounce.Out);
+            killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
             killTween.onComplete.addOnce(function () {
                 kill_block.kill();
 
