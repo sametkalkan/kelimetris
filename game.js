@@ -120,6 +120,76 @@ Game.update = function () {
 
     }
 
+    async function createNextBlocks(num) {
+        var pos = findPositions(num);
+        var keys = Object.keys(pos);
+
+        var j=0;
+
+        for(var i=0;i<keys.length;i++) {
+            setTimeout( function timer(){
+                var height = 1 + Math.floor(Math.random() * 2);
+                let word = pos[keys[j]];
+                // console.log(keys[j]);
+                var width;
+                /* to determine block width */
+                if(word.length<=4)
+                    width = 1;
+                else if(word.length<=10)
+                    width = 2;
+                else if(word.length<=15)
+                    width = 3;
+
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var block = createBlock(keys[j]*64, 0, width, height/2, color, word);
+                blocks.push(block);
+                j++;
+            }, i*300 );
+
+        }
+
+        setTimeout(function () {
+            if((isGameOver=checkGameOver()))
+                processGameOver();
+        }, i*100);
+    }
+
+    function remElement(arr, value) {
+        if(arr.indexOf(value)!==-1){
+            arr.splice(arr.indexOf(value), 1);
+        }
+    }
+
+    function findPositions(num) {
+        var positions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11];
+
+        var pos = {};
+
+        for(var i=0;i<num;i++) {
+            var x = Math.floor(Math.random()*positions.length);
+            var word = findWord();
+            var width = 0;
+            if(word.length<=4)
+                width = 1;
+            else if(word.length<=10)
+                width = 2;
+            else if(word.length<=15)
+                width = 3;
+
+            if( !positions.includes(positions[x]+width-1) ) {
+                i--;
+                continue;
+            }
+            pos[positions[x]] = word;
+            var s = positions[x];
+            for(let j=0;j<width;j++){
+                remElement(positions, s+j);
+            }
+        }
+        return pos;
+    }
+
+
     function checkGameOver() {
         if(isGameOver===true)
             return true;
@@ -271,76 +341,43 @@ Game.update = function () {
 
 
 
-function init_blocks(row, column, wait) {
-    for (let i = 0; i < row; i++) {
-            setTimeout( function timer(){
-                createBlocks(column);
-            }, i * wait);
-        }
-    }
-
-async function createNextBlocks(num) {
-    var sum = Math.floor(Math.random() * 5);
-    let i;
-        for (i=0; i<num; i++) {
-            setTimeout( function timer(){
-                var height = 1 + Math.floor(Math.random() * 2);
-                var word = findWord();
-                var width;
-
-                /* to determine block width */
-                if(word.length<=4)
-                    width = 1;
-                else if(word.length<=10)
-                    width = 2;
-                else if(word.length<=15)
-                    width = 3;
-
-                if(sum*64+width*64>=game.world.width)
-                    return;
-
-                var color = block_colors[Math.floor(Math.random() * 4)];
-                var block = createBlock(sum*64, 0, width, height/2, color, word);
-
-                blocks.push(block);
-
-                sum+=width;
-            }, i*100 );
+    function init_blocks(row, column, wait) {
+        for (let i = 0; i < row; i++) {
+                setTimeout( function timer(){
+                    createBlocks(column);
+                }, i * wait);
+            }
         }
 
-        setTimeout(function () {
-            if((isGameOver=checkGameOver()))
-                processGameOver();
-        }, i*100);
-    }
 
-function createBlocks(num) {
-    var sum = 0;
-        for (let i=0; i<num; i++) {
-            setTimeout( function timer(){
-                var height = 1 + Math.floor(Math.random() * 2);
-                var word = findWord();
-                var width;
 
-                /* to determine block width */
-                if(word.length<=4)
-                    width = 1;
-                else if(word.length<=10)
-                    width = 2;
-                else if(word.length<=15)
-                    width = 3;
+    function createBlocks(num) {
+        var sum = 0;
+            for (let i=0; i<num; i++) {
+                setTimeout( function timer(){
+                    var height = 1 + Math.floor(Math.random() * 2);
+                    var word = findWord();
+                    var width;
 
-                if(sum*64+width*64>=game.world.width)
-                    return;
+                    /* to determine block width */
+                    if(word.length<=4)
+                        width = 1;
+                    else if(word.length<=10)
+                        width = 2;
+                    else if(word.length<=15)
+                        width = 3;
 
-                var color = block_colors[Math.floor(Math.random() * 4)];
-                var block = createBlock(sum*64, -64, width, height/2, color, word);
+                    if(sum*64+width*64>=game.world.width)
+                        return;
 
-                blocks.push(block);
+                    var color = block_colors[Math.floor(Math.random() * 4)];
+                    var block = createBlock(sum*64, -64, width, height/2, color, word);
 
-                sum+=width;
-            }, i*100 );
-        }
+                    blocks.push(block);
+
+                    sum+=width;
+                }, i*100 );
+            }
     }
 
     function createBlock(x, y, width, height, color, word) {
