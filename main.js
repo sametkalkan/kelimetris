@@ -38,3 +38,6 @@ function startButton(pos) { // pos = 1 : display on menu sreen, pos = 2: display
 function startGame() {
     game.state.start('Game');
 }
+function loadLeaderboard(){
+    game.state.start('Leaderboard');
+}

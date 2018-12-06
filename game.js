@@ -6,7 +6,9 @@ var blockSize = 64; // px
 var numBlocksY = 12; // make the grid 19 blocks high
 var numBlocksX = 12; // make the grid 19 blocks wide
 var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
-
+var initial_row=7;
+var initial_column=8;
+var txtBox;
 
 var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
 
@@ -27,10 +29,10 @@ var strip;
 var isGameOver;
 
 Game.preload = function () {
-
-
         loadElements();
 };
+
+
 
 Game.create = function () {
 
@@ -42,7 +44,8 @@ Game.create = function () {
 
     createSounds();  // creates the sounds
 
-    init_blocks(7, 8, 700);
+    init_blocks(initial_row, initial_column, 700);
+    // setTimeout(enableBlockInput , ((initial_row*700)+(initial_column*100))+300);
 
     getWords();
 
@@ -134,7 +137,8 @@ Game.update = function () {
         for(var i=0;i<blocks.length;i++){
             blocks[i].inputEnabled = false;
         }
-        window.alert("GAME OVER !!");
+        window.alert("GAME OVER! Your score is "+score);
+
     }
 
     function findSimilarity(word) {
@@ -301,7 +305,6 @@ async function createNextBlocks(num) {
 
                 var color = block_colors[Math.floor(Math.random() * 4)];
                 var block = createBlock(sum*64, 0, width, height/2, color, word);
-
                 blocks.push(block);
 
                 sum+=width;
@@ -338,9 +341,11 @@ function createBlocks(num) {
 
                 blocks.push(block);
 
+
                 sum+=width;
             }, i*100 );
         }
+
     }
 
     function createBlock(x, y, width, height, color, word) {

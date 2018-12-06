@@ -104,7 +104,7 @@ function createLabelOnTheGround() {
 }
 
 function createTextBox() {
-    var txtBox = game.add.inputField(0, game.height-ground.height/3, {
+    txtBox = game.add.inputField(0, game.height-ground.height/3, {
         font: '18px Arial',
         fill: '#212121',
         fontWeight: 'bold',
