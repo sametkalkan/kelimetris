@@ -10,6 +10,8 @@ Menu.preload = function () {
     //------------scale the game-----------
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.setMinMax(game.width / 3, game.height / 3, game.width, game.height);
+    game.scale.pageAlignHorizontally = false;game.scale.pageAlignVertically = true;
+
     game.scale.compatibility.forceMinimumDocumentHeight = true;
     game.scale.refresh();
 };
