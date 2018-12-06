@@ -29,10 +29,6 @@ Game.radio = { // object that stores sound-related information
 };
 
 function loadElements() {
-    //------------full screen-----------
-    // game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-    // game.scale.pageAlignHorizontally = true;
-    // game.scale.pageAlignVertically = true;
         loadImages();
         loadSounds();
 }
