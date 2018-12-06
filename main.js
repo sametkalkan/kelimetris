@@ -15,6 +15,7 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+
 game.state.add('Game', Game);
 game.state.add('Menu', Menu);
 game.state.start('Menu');
