@@ -119,6 +119,7 @@ function createTextBox() {
         blockInput: true
     });
     txtBox.startFocus();
+    game.scale.refresh();
     txtBox.keyListener = textBoxListener;
 }
 
