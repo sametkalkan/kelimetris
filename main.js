@@ -2,6 +2,8 @@ var config = {
     type: Phaser.AUTO,
     width: 12 * 64 + 1 ,
     height: 590,
+    // parent: document.getElementById("game"),
+    scaleMode: Phaser.ScaleManager.SHOW_ALL,
 
     physics: {
         default: 'arcade',
@@ -37,4 +39,7 @@ function startButton(pos) { // pos = 1 : display on menu sreen, pos = 2: display
 
 function startGame() {
     game.state.start('Game');
+}
+function loadLeaderboard(){
+    game.state.start('Leaderboard');
 }
