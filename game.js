@@ -109,18 +109,81 @@ Game.update = function () {
         this.scoreText.setText(score);
         makeMovable();
 
-        createBlocks(3);
+        createNewBlocks(3);
 
         blocks.inputEnabled = true;
 
     }
 
+    function remElement(arr, value) {
+        if(arr.indexOf(value)!==-1){
+            arr.splice(arr.indexOf(value), 1);
+        }
+    }
+
+    function findPositions(num) {
+        var positions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11];
+
+        var pos = {};
+
+
+        for(var i=0;i<num;i++) {
+            var x = Math.floor(Math.random()*positions.length);
+            var word = findWord();
+            var width = 0;
+            if(word.length<=4)
+                width = 1;
+            else if(word.length<=10)
+                width = 2;
+            else if(word.length<=15)
+                width = 3;
+
+            if( !positions.includes(positions[x]+width-1) ) {
+                i--;
+                continue;
+            }
+            pos[positions[x]] = word;
+            var s = positions[x];
+            for(let j=0;j<width;j++){
+                remElement(positions, s+j);
+            }
+        }
+        return pos;
+    }
+
+    function createNewBlocks(num) {
+
+        var pos = findPositions(num);
+        var keys = Object.keys(pos);
+
+        var j=0;
+
+        for(var i=0;i<keys.length;i++) {
+            setTimeout( function timer(){
+                var height = 1 + Math.floor(Math.random() * 2);
+                let word = pos[keys[j]];
+                // console.log(keys[j]);
+                var width;
+                /* to determine block width */
+                if(word.length<=4)
+                    width = 1;
+                else if(word.length<=10)
+                    width = 2;
+                else if(word.length<=15)
+                    width = 3;
+
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var block = createBlock(keys[j]*64, 0, width, height/2, color, word);
+                blocks.push(block);
+                j++;
+            }, i*300 );
+
+        }
+    }
+
     function findSimilarity(word) {
         wordLabel.setText(word);
     }
-
-
-
 
 
     /**
