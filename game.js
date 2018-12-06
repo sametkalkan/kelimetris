@@ -22,6 +22,9 @@ var sound;  // background music
 
 var wordLabel;  // label on the ground
 
+var strip;
+
+var isGameOver;
 
 Game.preload = function () {
 
@@ -32,6 +35,8 @@ Game.preload = function () {
 Game.create = function () {
 
     game.add.plugin(PhaserInput.Plugin);
+
+    isGameOver = false;
 
     createElements();
 
@@ -104,24 +109,38 @@ Game.update = function () {
 
         blocks = blocks.filter((el) => !blocks_to_be_killed.includes(el));
 
-
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
         makeMovable();
 
+        //TODO this line is critical section. next instructors shouldn't be processed before this function is over.
         createNextBlocks(Math.floor(Math.random() * 4) + 2);
 
-        blocks.inputEnabled = true;
+        if((isGameOver=checkGameOver()))
+            processGameOver();
+    }
 
+    function checkGameOver() {
+        if(isGameOver===true)
+            return true;
+
+        for(var i=blocks.length-1;i>=0;i--){
+            if(blocks[i].y<=strip.y)
+                return true;
+        }
+        return false;
+    }
+
+    function processGameOver() {
+        for(var i=0;i<blocks.length;i++){
+            blocks[i].inputEnabled = false;
+        }
+        window.alert("GAME OVER !!");
     }
 
     function findSimilarity(word) {
         wordLabel.setText(word);
     }
-
-
-
-
 
     /**
      * verilen bloğun aynı rekteki komşularını ve onların komşularını bulur.
@@ -290,7 +309,6 @@ function createNextBlocks(num) {
         }
     }
 
-//TODO issue after killing the block new blocks appear always at the beginning to avoid this wwe can add random flog to the function
 function createBlocks(num) {
     var sum = 0;
         for (let i=0; i<num; i++) {
@@ -311,7 +329,7 @@ function createBlocks(num) {
                     return;
 
                 var color = block_colors[Math.floor(Math.random() * 4)];
-                var block = createBlock(sum*64, 0, width, height/2, color, word);
+                var block = createBlock(sum*64, -64, width, height/2, color, word);
 
                 blocks.push(block);
 
@@ -326,7 +344,7 @@ function createBlocks(num) {
         game.physics.arcade.enable(block);
         block.inputEnabled = true;
         block.events.onInputDown.add(blockClick, this);
-        block.body.collideWorldBounds=true;
+        // block.body.collideWorldBounds=true;
         block.body.checkCollision=true;
 
         block.scale.setTo(width, height);
