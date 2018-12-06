@@ -1,6 +1,6 @@
 var config = {
     type: Phaser.AUTO,
-    width: 12 * 64 + 1,
+    width: 12 * 64 + 1 ,
     height: 590,
 
     physics: {
@@ -15,6 +15,7 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+
 game.state.add('Game', Game);
 game.state.add('Menu', Menu);
 game.state.start('Menu');

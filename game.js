@@ -22,6 +22,9 @@ var sound;  // background music
 
 var wordLabel;  // label on the ground
 
+var strip;
+
+var isGameOver;
 
 Game.preload = function () {
 
@@ -33,11 +36,13 @@ Game.create = function () {
 
     game.add.plugin(PhaserInput.Plugin);
 
+    isGameOver = false;
+
     createElements();
 
     createSounds();  // creates the sounds
 
-    init_blocks(5, 8, 700);
+    init_blocks(7, 8, 700);
 
     getWords();
 
@@ -104,15 +109,46 @@ Game.update = function () {
 
         blocks = blocks.filter((el) => !blocks_to_be_killed.includes(el));
 
-
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
         makeMovable();
 
-        createNewBlocks(3);
 
-        blocks.inputEnabled = true;
+        //TODO this line is critical section. next instructors shouldn't be processed before this function is over.
+        createNextBlocks(3);
+        // game.time.events.add(Phaser.Timer.SECOND*1.1, checkGameOver(), this);
 
+    }
+
+   
+    function createNewBlocks(num) {
+
+        var pos = findPositions(num);
+        var keys = Object.keys(pos);
+
+        var j=0;
+
+        for(var i=0;i<keys.length;i++) {
+            setTimeout( function timer(){
+                var height = 1 + Math.floor(Math.random() * 2);
+                let word = pos[keys[j]];
+                // console.log(keys[j]);
+                var width;
+                /* to determine block width */
+                if(word.length<=4)
+                    width = 1;
+                else if(word.length<=10)
+                    width = 2;
+                else if(word.length<=15)
+                    width = 3;
+
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var block = createBlock(keys[j]*64, 0, width, height/2, color, word);
+                blocks.push(block);
+                j++;
+            }, i*300 );
+
+        }
     }
 
     function remElement(arr, value) {
@@ -151,41 +187,26 @@ Game.update = function () {
         return pos;
     }
 
-    function createNewBlocks(num) {
-
-        var pos = findPositions(num);
-        var keys = Object.keys(pos);
-
-        var j=0;
-
-        for(var i=0;i<keys.length;i++) {
-            setTimeout( function timer(){
-                var height = 1 + Math.floor(Math.random() * 2);
-                let word = pos[keys[j]];
-                // console.log(keys[j]);
-                var width;
-                /* to determine block width */
-                if(word.length<=4)
-                    width = 1;
-                else if(word.length<=10)
-                    width = 2;
-                else if(word.length<=15)
-                    width = 3;
-
-                var color = block_colors[Math.floor(Math.random() * 4)];
-                var block = createBlock(keys[j]*64, 0, width, height/2, color, word);
-                blocks.push(block);
-                j++;
-            }, i*300 );
-
+    function checkGameOver() {
+        if(isGameOver===true)
+            return true;
+        for(var i=blocks.length-1;i>=0;i--){
+            if(blocks[i].y<=strip.y)
+                return true;
         }
+        return false;
+    }
+
+    function processGameOver() {
+        for(var i=0;i<blocks.length;i++){
+            blocks[i].inputEnabled = false;
+        }
+        window.alert("GAME OVER !!");
     }
 
     function findSimilarity(word) {
         wordLabel.setText(word);
     }
-
-
     /**
      * verilen bloğun aynı rekteki komşularını ve onların komşularını bulur.
      * bulma işlemini Depth First Search algoritması ile yapar.
@@ -324,10 +345,10 @@ function init_blocks(row, column, wait) {
         }
     }
 
-//TODO issue after killing the block new blocks appear always at the beginning to avoid this wwe can add random flog to the function
-function createBlocks(num) {
-    var sum = 0;
-        for (let i=0; i<num; i++) {
+async function createNextBlocks(num) {
+    var sum = Math.floor(Math.random() * 5);
+    let i;
+        for (i=0; i<num; i++) {
             setTimeout( function timer(){
                 var height = 1 + Math.floor(Math.random() * 2);
                 var word = findWord();
@@ -352,6 +373,40 @@ function createBlocks(num) {
                 sum+=width;
             }, i*100 );
         }
+
+        setTimeout(function () {
+            if((isGameOver=checkGameOver()))
+                processGameOver();
+        }, i*100);
+    }
+
+function createBlocks(num) {
+    var sum = 0;
+        for (let i=0; i<num; i++) {
+            setTimeout( function timer(){
+                var height = 1 + Math.floor(Math.random() * 2);
+                var word = findWord();
+                var width;
+
+                /* to determine block width */
+                if(word.length<=4)
+                    width = 1;
+                else if(word.length<=10)
+                    width = 2;
+                else if(word.length<=15)
+                    width = 3;
+
+                if(sum*64+width*64>=game.world.width)
+                    return;
+
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var block = createBlock(sum*64, -64, width, height/2, color, word);
+
+                blocks.push(block);
+
+                sum+=width;
+            }, i*100 );
+        }
     }
 
     function createBlock(x, y, width, height, color, word) {
@@ -360,7 +415,7 @@ function createBlocks(num) {
         game.physics.arcade.enable(block);
         block.inputEnabled = true;
         block.events.onInputDown.add(blockClick, this);
-        block.body.collideWorldBounds=true;
+        // block.body.collideWorldBounds=true;
         block.body.checkCollision=true;
 
         block.scale.setTo(width, height);
