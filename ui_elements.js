@@ -118,7 +118,7 @@ function createTextBox() {
         focusOutOnEnter: true,
         blockInput: true
     });
-    txtBox.startFocus();
+    // txtBox.startFocus();
     game.scale.refresh();
     txtBox.keyListener = textBoxListener;
 }
