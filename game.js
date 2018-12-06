@@ -42,7 +42,7 @@ Game.create = function () {
 
     createSounds();  // creates the sounds
 
-    init_blocks(5, 8, 700);
+    init_blocks(7, 8, 700);
 
     getWords();
 
@@ -116,14 +116,13 @@ Game.update = function () {
         //TODO this line is critical section. next instructors shouldn't be processed before this function is over.
         createNextBlocks(Math.floor(Math.random() * 4) + 2);
 
-        if((isGameOver=checkGameOver()))
-            processGameOver();
+        // game.time.events.add(Phaser.Timer.SECOND*1.1, checkGameOver(), this);
+
     }
 
     function checkGameOver() {
         if(isGameOver===true)
             return true;
-
         for(var i=blocks.length-1;i>=0;i--){
             if(blocks[i].y<=strip.y)
                 return true;
@@ -280,9 +279,10 @@ function init_blocks(row, column, wait) {
         }
     }
 
-function createNextBlocks(num) {
+async function createNextBlocks(num) {
     var sum = Math.floor(Math.random() * 5);
-        for (let i=0; i<num; i++) {
+    let i;
+        for (i=0; i<num; i++) {
             setTimeout( function timer(){
                 var height = 1 + Math.floor(Math.random() * 2);
                 var word = findWord();
@@ -307,6 +307,11 @@ function createNextBlocks(num) {
                 sum+=width;
             }, i*100 );
         }
+
+        setTimeout(function () {
+            if((isGameOver=checkGameOver()))
+                processGameOver();
+        }, i*100);
     }
 
 function createBlocks(num) {
