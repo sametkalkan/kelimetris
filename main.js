@@ -2,6 +2,8 @@ var config = {
     type: Phaser.AUTO,
     width: 12 * 64 + 1 ,
     height: 590,
+    // parent: document.getElementById("game"),
+    scaleMode: Phaser.ScaleManager.SHOW_ALL,
 
     physics: {
         default: 'arcade',

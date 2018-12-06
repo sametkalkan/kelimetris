@@ -134,13 +134,30 @@ Game.update = function () {
     }
 
     function processGameOver() {
-        for(var i=0;i<blocks.length;i++){
-            blocks[i].inputEnabled = false;
-        }
-        window.alert("GAME OVER! Your score is "+score);
+        game.input.keyboard.enabled = false;
+        game.input.mouse.enabled = false;
+        Game.radio.music.pause();
+        Game.radio.playSound(Game.radio.gameOverSound);
+        makeShade();
+        var gameover = game.add.bitmapText(game.world.centerX, game.world.centerY, 'gameover',
+            'GAME OVER!', 50);
+        gameover.anchor.setTo(0.5);
+        //TODO score is not appearing
+        var overall_score = game.add.bitmapText(game.world.centerX, game.world.centerY + 100, 'gameover',
+            'Your score is ' + score + ' !', 20);
+        overall_score.anchor.setTo(0.5);
+        // Display the form to input your name for the leaderboard
+        document.getElementById("name").style.display = "block";
 
     }
 
+// Puts a shade on the stage for the game over and pause screens
+function makeShade() {
+    shade = game.add.graphics(0, 0);
+    shade.beginFill(0x000000, 0.6);
+    shade.drawRect(0, 0, game.world.width, game.world.height);
+    shade.endFill();
+}
     function findSimilarity(word) {
         wordLabel.setText(word);
     }
