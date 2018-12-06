@@ -7,6 +7,12 @@ Menu.preload = function () {
     game.load.bitmapFont('desyrel', 'assets/fonts/desyrel.png', 'assets/fonts/desyrel.xml');
     game.load.spritesheet('button', 'assets/start.png', 201, 71);
     game.load.audio('music', 'assets/sound/tetris.mp3'); // load music now so it's loaded by the time the game starts
+    //------------scale the game-----------
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.setMinMax(game.width / 3, game.height / 3, game.width, game.height);
+    // game.scale.pageAlignHorizontally = false;game.scale.pageAlignVertically = true;
+    game.scale.compatibility.forceMinimumDocumentHeight = true;
+    game.scale.refresh();
 };
 
 Menu.create = function () {
