@@ -40,6 +40,7 @@ function loadImages() {
     game.load.image('red_block', 'assets/red_unit.png');
     game.load.image('yellow_block', 'assets/yellow_unit.png');
     game.load.image('ground', 'assets/ground.png');
+    game.load.image('strip', 'assets/strip.jpg');
 
     game.load.bitmapFont('desyrel', 'assets/fonts/desyrel.png', 'assets/fonts/desyrel.xml');
 
@@ -56,7 +57,8 @@ function loadSounds() {
 
 function createElements() {
     game.add.sprite(0, 0, 'sky');  // background image
-    
+    strip = game.add.sprite(150, 25, 'strip');  // background image
+    strip.scale.setTo(0.5, 0.25);
     createGround();
     soundOnOff();
     createScore();
