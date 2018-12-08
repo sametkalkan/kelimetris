@@ -232,22 +232,6 @@ Game.update = function () {
 
     }
 
-function endTheGame() {
-    for (var i = 0; i < blocks.length; i++) {
-        blocks[i].body.immovable = true;
-        blocks[i].body.velocity.y = 0;
-        block.inputEnabled = true;
-        block.events.onInputDown.add(blockClick, this);
-        // block.body.collideWorldBounds=true;
-        block.body.checkCollision = true;
-
-        block.scale.setTo(width, height);
-        block.enableBody = true;
-        block.bounce = 0;
-        block.body.velocity.y = 500;
-        block.color = color;
-    }
-}
 
 // Puts a shade on the stage for the game over and pause screens
 function makeShade() {
