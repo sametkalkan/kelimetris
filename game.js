@@ -101,15 +101,14 @@ Game.update = function () {
             // blocks_to_be_killed[i].body.checkCollision=false;
             var kill_block = blocks_to_be_killed[i];
             var moweTween = game.add.tween(kill_block);
-
-            moweTween.to({x: 0, y: 0}, 300, Phaser.Easing.Linear.None);
+            moweTween.to({x: 15, y: 25}, 50, Phaser.Easing.Linear.None);
             // moweTween.onComplete.add(function () {
             //
             //
             // }, this);
 
             var scaleTween = game.add.tween(kill_block.scale);
-            scaleTween.to({x: 0, y: 0}, 320, Phaser.Easing.Linear.None);
+            scaleTween.to({x: 0, y: 0}, 500, Phaser.Easing.Linear.None);
             scaleTween.onComplete.addOnce(function () {
                 kill_block.kill();
             }, this);
