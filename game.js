@@ -38,7 +38,6 @@ Game.create = function () {
 
     game.add.plugin(PhaserInput.Plugin);
 
-    isGameOver = false;
 
     createElements();
 
@@ -69,7 +68,7 @@ Game.update = function () {
      * falls blocks over the killed blocks.
      */
     function makeMovable() {
-        for(var i=0;i<blocks.length;i++){
+        for (let i = 0; i < blocks.length; i++) {
             blocks[i].body.immovable = false;
             blocks[i].body.velocity.y = 300;
         }
@@ -123,11 +122,8 @@ Game.update = function () {
 
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
-        makeMovable();
-
         //TODO this line is critical section. next instructors shouldn't be processed before this function is over.
-        createNextBlocks(Math.floor(Math.random() * 4) + 2);
-
+        makeMovable(createNextBlocks(Math.floor(Math.random() * 4) + 2));
         // game.time.events.add(Phaser.Timer.SECOND*1.1, checkGameOver(), this);
 
     }

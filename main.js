@@ -41,5 +41,8 @@ function startGame() {
     game.state.start('Game');
 }
 function loadLeaderboard(){
+    //reloads the game
+    location.reload();
+
     game.state.start('Leaderboard');
 }
