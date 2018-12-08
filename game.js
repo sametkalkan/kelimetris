@@ -6,7 +6,7 @@ var blockSize = 64; // px
 var numBlocksY = 12; // make the grid 19 blocks high
 var numBlocksX = 12; // make the grid 19 blocks wide
 var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
-var initial_row=7;
+var initial_row = 3;
 var initial_column=8;
 var txtBox;
 
@@ -100,14 +100,21 @@ Game.update = function () {
             // blocks_to_be_killed[i].body.collideWorldBounds=false;
             // blocks_to_be_killed[i].body.checkCollision=false;
             var kill_block = blocks_to_be_killed[i];
-            var killTween = game.add.tween(kill_block.scale);
-            killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
-            killTween.onComplete.addOnce(function () {
-                kill_block.kill();
+            var moweTween = game.add.tween(kill_block);
+            moweTween.to({x: 15, y: 25}, 50, Phaser.Easing.Linear.None);
+            // moweTween.onComplete.add(function () {
+            //
+            //
+            // }, this);
 
+            var scaleTween = game.add.tween(kill_block.scale);
+            scaleTween.to({x: 0, y: 0}, 500, Phaser.Easing.Linear.None);
+            scaleTween.onComplete.addOnce(function () {
+                kill_block.kill();
             }, this);
 
-            killTween.start();
+            moweTween.start();
+            scaleTween.start();
             // blocks_to_be_killed[i].kill();
             score += 50;
         }
@@ -223,7 +230,7 @@ Game.update = function () {
         gameover.anchor.setTo(0.5);
         //TODO score is not appearing
         var overall_score = game.add.bitmapText(game.world.centerX, game.world.centerY + 100, 'gameover',
-            'Your score is ' + score + ' !', 20);
+            'Your score is ' + score.text + ' !', 20);
         overall_score.anchor.setTo(0.5);
         game.paused = true;
 
