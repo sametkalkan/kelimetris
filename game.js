@@ -277,7 +277,6 @@ function makeShade() {
                 }
             }
         }
-
         return neighbors;
     }
 
