@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import math
 import sqlite3
+import operator
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -39,6 +40,7 @@ def find_all_cosine(one, all):
     word_value = one.fetchone()
     mainword = word_value[1]            # this is word
     vect_of_mainword = []               # this is vector that of word
+    array = dict()
     for vec in word_value[2].split(' '):
         vect_of_mainword.append(float(vec))
     #-----------------------------------------------#
@@ -47,23 +49,23 @@ def find_all_cosine(one, all):
         for vec in row[2].split(' '):
             vect_of_word.append(float(vec))
 
-        str = mainword + "\t" + row[1].encode() + "\t" + repr(cosine_similarity(vect_of_mainword, vect_of_word, 200))
-        print(str)
+        array[row[1].encode()] = repr(cosine_similarity(vect_of_mainword, vect_of_word, 200))
+
+    sorted_array = sorted(array.items(), key = operator.itemgetter(1))
+    result = []
+    for element in sorted_array:
+        result.append(element[0])
+    return result
 
 
 
 
 
 
-database_name = "kelimetris.db"
-table_name="vectors"
-
-input_word = ['hacettepe']
-words_list = ['yemek', 'hastahane', 'sağlık', 'sıhhıye', 'mühendislik', 'üniversite', 'bilim', 'sanat', 'beytepe', 'tıp']
-
-
+'''
 # this block opens database connection
 conn = sqlite3.connect(database_name)
+
 print (database_name + " database successfully")
 print ("+---------------------------------+")
 
@@ -78,3 +80,4 @@ find_all_cosine(word_sql, list_sql)
 conn.close()
 print ("+----------------------------------------+")
 print (database_name + " database closed successfully")
+'''
