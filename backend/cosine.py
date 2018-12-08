@@ -25,6 +25,7 @@ def cosine_similarity(v1, v2, vec_len):
 def convert_query(words):
     temp_list = ""
     for i in range((len(words))):
+        words[i] =  words[i].strip()
         if (i == len(words) - 1):
             temp_list += "\'" + words[i] + "\'"
         else:
@@ -38,7 +39,7 @@ def convert_query(words):
 
 def find_all_cosine(one, all):
     word_value = one.fetchone()
-    mainword = word_value[1]            # this is word
+    mainword = word_value[1]           # this is word
     vect_of_mainword = []               # this is vector that of word
     array = dict()
     for vec in word_value[2].split(' '):
