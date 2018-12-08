@@ -38,7 +38,7 @@ function loadImages() {
     game.load.image('blue_block', 'assets/blue_unit.png');
     game.load.image('green_block', 'assets/green_unit.png');
     game.load.image('red_block', 'assets/red_unit.png');
-    game.load.image('yellow_block', 'assets/yellow_unit.png');
+    game.load.image('yellow_block', 'assets/purple_unit.png');
     game.load.image('ground', 'assets/ground.png');
     game.load.image('strip', 'assets/strip.jpg');
 
