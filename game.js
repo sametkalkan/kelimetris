@@ -6,7 +6,7 @@ var blockSize = 64; // px
 var numBlocksY = 12; // make the grid 19 blocks high
 var numBlocksX = 12; // make the grid 19 blocks wide
 var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
-var initial_row = 3;
+var initial_row=3;
 var initial_column=8;
 var txtBox;
 
@@ -35,7 +35,7 @@ Game.preload = function () {
 };
 
 Game.create = function () {
-
+    game.physics.startSystem(Phaser.Physics.ARCADE);
     game.add.plugin(PhaserInput.Plugin);
 
     isGameOver = false;
@@ -52,11 +52,13 @@ Game.create = function () {
 
 
 Game.update = function () {
-        game.physics.arcade.collide(ground, blocks, collision_handler2);
-        game.physics.arcade.collide(blocks, blocks, collision_handler);
+        var a = game.physics.arcade.collide(ground, blocks, collision_handler2);
+        var b = game.physics.arcade.collide(blocks, blocks, collision_handler);
+
 };
 
     function collision_handler2(ground, block){
+
         block.body.immovable = true;
     }
 
@@ -100,21 +102,14 @@ Game.update = function () {
             // blocks_to_be_killed[i].body.collideWorldBounds=false;
             // blocks_to_be_killed[i].body.checkCollision=false;
             var kill_block = blocks_to_be_killed[i];
-            var moweTween = game.add.tween(kill_block);
-            moweTween.to({x: 15, y: 25}, 50, Phaser.Easing.Linear.None);
-            // moweTween.onComplete.add(function () {
-            //
-            //
-            // }, this);
-
-            var scaleTween = game.add.tween(kill_block.scale);
-            scaleTween.to({x: 0, y: 0}, 500, Phaser.Easing.Linear.None);
-            scaleTween.onComplete.addOnce(function () {
+            var killTween = game.add.tween(kill_block.scale);
+            killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
+            killTween.onComplete.addOnce(function () {
                 kill_block.kill();
+
             }, this);
 
-            moweTween.start();
-            scaleTween.start();
+            killTween.start();
             // blocks_to_be_killed[i].kill();
             score += 50;
         }
@@ -164,10 +159,10 @@ Game.update = function () {
 
         }
 
-        setTimeout(function () {
-            if((isGameOver=checkGameOver()))
-                processGameOver();
-        }, i*100);
+        // setTimeout(function () {
+        //     if((isGameOver=checkGameOver()))
+        //         processGameOver();
+        // }, i*100);
     }
 
     function remElement(arr, value) {
@@ -230,7 +225,7 @@ Game.update = function () {
         gameover.anchor.setTo(0.5);
         //TODO score is not appearing
         var overall_score = game.add.bitmapText(game.world.centerX, game.world.centerY + 100, 'gameover',
-            'Your score is ' + score.text + ' !', 20);
+            'Your score is ' + score + ' !', 20);
         overall_score.anchor.setTo(0.5);
         game.paused = true;
 
@@ -426,12 +421,12 @@ function makeShade() {
         block.inputEnabled = true;
         block.events.onInputDown.add(blockClick, this);
         // block.body.collideWorldBounds=true;
-        block.body.checkCollision=true;
+        // block.body.checkCollision=true;
 
         block.scale.setTo(width, height);
         block.enableBody = true;
         block.bounce = 0;
-        block.body.velocity.y = 500;
+        // block.body.velocity.y = 500;
         block.color = color;
 
         addWordToBlock(block, word);
