@@ -26,7 +26,7 @@ var wordLabel;  // label on the ground
 
 var strip;
 
-var isGameOver;
+var isGameOver = false;
 
 Game.preload = function () {
 
@@ -80,6 +80,9 @@ Game.update = function () {
      * @param block
      */
     function blockClick(block) {
+        if (isGameOver) {
+            return;
+        }
         blocks.inputEnabled = false;
         var same_color_blocks = findSameColorBlock(block);  // aynı renkteki blokları getirir.
         var blocks_to_be_killed = findNeighborsChain(block, same_color_blocks);
@@ -130,6 +133,10 @@ Game.update = function () {
 
         for(var i=0;i<keys.length;i++) {
             setTimeout( function timer(){
+                if (isGameOver) {
+                    return;
+                }
+
                 var height = 1 + Math.floor(Math.random() * 2);
                 let word = pos[keys[j]];
                 // console.log(keys[j]);
@@ -203,10 +210,13 @@ Game.update = function () {
     }
 
     function processGameOver() {
+        isGameOver = true;
         game.input.keyboard.enabled = false;
         game.input.mouse.enabled = false;
+
         Game.radio.music.pause();
         Game.radio.playSound(Game.radio.gameOverSound);
+
         makeShade();
         var gameover = game.add.bitmapText(game.world.centerX, game.world.centerY, 'gameover',
             'GAME OVER!', 50);
@@ -215,10 +225,13 @@ Game.update = function () {
         var overall_score = game.add.bitmapText(game.world.centerX, game.world.centerY + 100, 'gameover',
             'Your score is ' + score + ' !', 20);
         overall_score.anchor.setTo(0.5);
+        game.paused = true;
+
         // Display the form to input your name for the leaderboard
         document.getElementById("name").style.display = "block";
 
     }
+
 
 // Puts a shade on the stage for the game over and pause screens
 function makeShade() {
