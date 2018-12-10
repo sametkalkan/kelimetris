@@ -6,6 +6,7 @@ var blockSize = 64; // px
 var numBlocksY = 12; // make the grid 19 blocks high
 var numBlocksX = 12; // make the grid 19 blocks wide
 var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
+
 var initial_row = 3;
 var initial_column=8;
 var txtBox;
@@ -46,7 +47,6 @@ Game.create = function () {
     init_blocks(initial_row, initial_column, 700);
 
     getWords();
-
 };
 
 
@@ -62,6 +62,7 @@ Game.update = function () {
     function collision_handler(block1, block2){
         block1.body.immovable = true;
         block2.body.immovable = true;
+
     }
 
     /**
@@ -70,7 +71,7 @@ Game.update = function () {
     function makeMovable() {
         for (let i = 0; i < blocks.length; i++) {
             blocks[i].body.immovable = false;
-            blocks[i].body.velocity.y = 500 + blocks[i].body.velocity.y/100;
+            blocks[i].body.velocity.y = 500+blocks[i].body.y/100;
         }
     }
 
@@ -124,7 +125,7 @@ Game.update = function () {
         this.scoreText.setText(score);
 
         makeMovable();
-
+      
         //TODO this line is critical section. next instructors shouldn't be processed before this function is over.
         createNextBlocks(Math.floor(Math.random() * 4) + 2);
 
@@ -161,12 +162,16 @@ Game.update = function () {
                 j++;
             }, i*300 );
 
+
         }
+
         i++;
         setTimeout(function () {
             if((isGameOver=checkGameOver()))
                 processGameOver();
         }, i*300);
+
+        makeMovable();
     }
 
     function remElement(arr, value) {
