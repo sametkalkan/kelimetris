@@ -93,7 +93,8 @@ function soundOnOff() {
 
 function createGround() {
     ground = game.add.sprite(0, game.world.height - 64  , 'ground');
-    game.physics.arcade.enable(ground);
+    game.physics.enable(ground, Phaser.Physics.ARCADE);
+    // ground.body.allowGravity = false;
     ground.body.immovable = true;
     ground.enableBody = true;
 }
