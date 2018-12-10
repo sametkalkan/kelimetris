@@ -57,7 +57,7 @@ function loadSounds() {
 
 function createElements() {
     game.add.sprite(0, 0, 'sky');  // background image
-    strip = game.add.sprite(150, 25, 'strip');  // background image
+    strip = game.add.sprite(75, 40, 'strip');  // background image
     strip.scale.setTo(0.5, 0.25);
     createGround();
     soundOnOff();
