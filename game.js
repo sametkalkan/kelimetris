@@ -6,7 +6,7 @@ var blockSize = 64; // px
 var numBlocksY = 12; // make the grid 19 blocks high
 var numBlocksX = 12; // make the grid 19 blocks wide
 var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
-var initial_row=6;
+var initial_row = 3;
 var initial_column=8;
 var txtBox;
 
@@ -36,11 +36,8 @@ Game.preload = function () {
 
 Game.create = function () {
 
-    // game.physics.startSystem(Phaser.Physics.ARCADE);
-    // game.physics.arcade.gravity.y = 100;
     game.add.plugin(PhaserInput.Plugin);
 
-    isGameOver = false;
 
     createElements();
 
@@ -59,40 +56,22 @@ Game.update = function () {
 };
 
     function collision_handler2(ground, block){
-        // block.body.immovable = true;
-        block.body.y = 0;
-
+        block.body.immovable = true;
     }
 
     function collision_handler(block1, block2){
-        // block1.body.immovable = true;
-        block1.body.y = 0;
-        // block2.body.immovable = true;
-        block2.body.y = 0;
-
+        block1.body.immovable = true;
+        block2.body.immovable = true;
     }
 
     /**
      * falls blocks over the killed blocks.
      */
     function makeMovable() {
-        for(var i=0;i<blocks.length;i++){
-            // blocks[i].moves = true;
+        for (let i = 0; i < blocks.length; i++) {
             blocks[i].body.immovable = false;
             blocks[i].body.velocity.y = 300;
-            console.log(i, blocks[i].txt);
         }
-        // var bottom = game.world.height - 64;
-        //
-        // for(var i=bottom;i>=25;i-=1){
-        //     for(var j=0;j<blocks.length;j++) {
-        //         if(blocks[j].y>=i){
-        //             // console.log(blocks[j].body.y, i);
-        //             blocks[j].body.immovable = false;
-        //             blocks[j].body.velocity.y = 500;
-        //         }
-        //     }
-        // }
     }
 
     /**
@@ -120,14 +99,21 @@ Game.update = function () {
             // blocks_to_be_killed[i].body.collideWorldBounds=false;
             // blocks_to_be_killed[i].body.checkCollision=false;
             var kill_block = blocks_to_be_killed[i];
-            var killTween = game.add.tween(kill_block.scale);
-            killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
-            killTween.onComplete.addOnce(function () {
-                kill_block.kill();
+            var moweTween = game.add.tween(kill_block);
+            moweTween.to({x: 15, y: 25}, 50, Phaser.Easing.Linear.None);
+            // moweTween.onComplete.add(function () {
+            //
+            //
+            // }, this);
 
+            var scaleTween = game.add.tween(kill_block.scale);
+            scaleTween.to({x: 0, y: 0}, 500, Phaser.Easing.Linear.None);
+            scaleTween.onComplete.addOnce(function () {
+                kill_block.kill();
             }, this);
 
-            killTween.start();
+            moweTween.start();
+            scaleTween.start();
             // blocks_to_be_killed[i].kill();
             score += 50;
         }
@@ -136,13 +122,8 @@ Game.update = function () {
 
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
-
-        makeMovable();
-
         //TODO this line is critical section. next instructors shouldn't be processed before this function is over.
-        // createNextBlocks(Math.floor(Math.random() * 4) + 2);
-        createNextBlocks(3);
-
+        makeMovable(createNextBlocks(Math.floor(Math.random() * 4) + 2));
         // game.time.events.add(Phaser.Timer.SECOND*1.1, checkGameOver(), this);
 
     }
@@ -153,8 +134,7 @@ Game.update = function () {
 
         var j=0;
 
-        var i;
-        for(i=0;i<keys.length;i++) {
+        for(var i=0;i<keys.length;i++) {
             setTimeout( function timer(){
                 if (isGameOver) {
                     return;
@@ -180,10 +160,10 @@ Game.update = function () {
 
         }
 
-        // setTimeout(function () {
-        //     if((isGameOver=checkGameOver()))
-        //         processGameOver();
-        // }, i*300);
+        setTimeout(function () {
+            if((isGameOver=checkGameOver()))
+                processGameOver();
+        }, i*100);
     }
 
     function remElement(arr, value) {
@@ -246,7 +226,7 @@ Game.update = function () {
         gameover.anchor.setTo(0.5);
         //TODO score is not appearing
         var overall_score = game.add.bitmapText(game.world.centerX, game.world.centerY + 100, 'gameover',
-            'Your score is ' + score + ' !', 20);
+            'Your score is ' + score.text + ' !', 20);
         overall_score.anchor.setTo(0.5);
         game.paused = true;
 
@@ -446,7 +426,8 @@ function makeShade() {
 
         block.scale.setTo(width, height);
         block.enableBody = true;
-        block.body.velocity.y = 400;
+        block.bounce = 0;
+        block.body.velocity.y = 500;
         block.color = color;
 
         addWordToBlock(block, word);
@@ -464,8 +445,6 @@ function addWordToBlock(block, word) {
     var text = game.add.text(10, block.height/3, word, style);
     text.scale.setTo(1/(block.width/64), 1/(block.height/64));
     block.addChild(text);
-    block.txt = word;
-    // console.log(block.getText());
 
 }
 
