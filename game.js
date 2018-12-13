@@ -124,10 +124,9 @@ Game.update = function () {
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
 
-        makeMovable();
-      
+        makeMovable(createNextBlocks(Math.floor(Math.random() * 4) + 2));
         //TODO this line is critical section. next instructors shouldn't be processed before this function is over.
-        createNextBlocks(Math.floor(Math.random() * 4) + 2);
+
 
     }
 
@@ -405,7 +404,7 @@ function makeShade() {
                     /* to determine block width */
                     if(word.length<=4)
                         width = 1;
-                    else if(word.length<=10)
+                    else if(word.length<=8)
                         width = 2;
                     else if(word.length<=15)
                         width = 3;
@@ -442,16 +441,19 @@ function makeShade() {
 
         return block;
     }
-
+//TODO align
 function addWordToBlock(block, word) {
 
-    var word_width = 12.8*word.length;
+    var word_width = 18*word.length;
 
     var style = { font: "20px Arial", fill: "#ffffff", wordWrap: true, wordWrapWidth: block.width, align: "center"};
+    console.log(word+"\n");
+    console.log(block.width+"\n");
+    console.log(word_width+"\n");
+    console.log((block.width-word_width)/4);
+    var text = game.add.text(0 , block.height/3.5, word, style);
+    text.scale.setTo(64/block.width, 64/block.height);
 
-
-    var text = game.add.text(10, block.height/3, word, style);
-    text.scale.setTo(1/(block.width/64), 1/(block.height/64));
     block.addChild(text);
 
 }
