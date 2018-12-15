@@ -404,7 +404,7 @@ function makeShade() {
                     /* to determine block width */
                     if(word.length<=4)
                         width = 1;
-                    else if(word.length<=8)
+                    else if (word.length <= 10)
                         width = 2;
                     else if(word.length<=15)
                         width = 3;
@@ -444,14 +444,15 @@ function makeShade() {
 //TODO align
 function addWordToBlock(block, word) {
 
-    var word_width = 18*word.length;
+    var word_width = 10 * word.length;
 
-    var style = { font: "20px Arial", fill: "#ffffff", wordWrap: true, wordWrapWidth: block.width, align: "center"};
-    console.log(word+"\n");
-    console.log(block.width+"\n");
-    console.log(word_width+"\n");
-    console.log((block.width-word_width)/4);
-    var text = game.add.text(0 , block.height/3.5, word, style);
+    var style = {font: "20px Arial", fill: "#ffffff"};
+
+    // console.log(word+"\n");
+    // console.log(block.width+"\n");
+    // console.log(word_width+"\n");
+    // console.log((block.width-word_width)/2);
+    let text = game.add.text(((block.width - word_width) / 2) * (64 / block.width), block.height / 3.5, word, style);
     text.scale.setTo(64/block.width, 64/block.height);
 
     block.addChild(text);
@@ -472,7 +473,7 @@ function getWords() {
     var path = "assets/words.txt";
     //TODO words must be fetched via query
     words = "masa\n" +
-        "tahta\n" +
+        "tahtaaaaaaaa\n" +
         "kalem\n" +
         "silgi\n" +
         "pencere\n" +
