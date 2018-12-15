@@ -38,7 +38,7 @@ function loadImages() {
     game.load.image('blue_block', 'assets/blue_unit.png');
     game.load.image('green_block', 'assets/green_unit.png');
     game.load.image('red_block', 'assets/red_unit.png');
-    game.load.image('yellow_block', 'assets/purple_unit.png');
+    game.load.image('purple_block', 'assets/purple_unit.png');
     game.load.image('ground', 'assets/ground.png');
     game.load.image('strip', 'assets/strip.jpg');
 
@@ -104,6 +104,44 @@ function createLabelOnTheGround() {
     ground.addChild(wordLabel);
 }
 
+function createGameOverTextBox(x, y, w) {
+    gameOverTxtBox = game.add.inputField(x, y, {
+        font: '18px Arial',
+        fill: '#212121',
+        fontWeight: 'bold',
+        width: w,
+        padding: 5,
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 7,
+        placeHolder: 'Enter Your Name',
+        type: PhaserInput.InputType.text,
+        focusOutOnEnter: true,
+        blockInput: true
+    });
+    gameOverTxtBox.startFocus();
+    game.scale.refresh();
+    gameOverTxtBox.keyListener = gameOverTextBoxListener;
+}
+
+function gameOverTextBoxListener(evt) {
+    this.value = this.getFormattedText(this.domElement.value);
+
+    if (evt.keyCode === 13) {
+        //TODO after entering the name
+
+        this.resetText();
+        this.endFocus();
+        this.startFocus();
+        return;
+    }
+
+    this.updateText();
+    this.updateCursor();
+    this.updateSelection();
+    evt.preventDefault();
+}
+
 function createTextBox() {
     txtBox = game.add.inputField(0, game.height-ground.height/3, {
         font: '18px Arial',
@@ -119,7 +157,7 @@ function createTextBox() {
         focusOutOnEnter: true,
         blockInput: true
     });
-    // txtBox.startFocus();
+    txtBox.startFocus();
     game.scale.refresh();
     txtBox.keyListener = textBoxListener;
 }
