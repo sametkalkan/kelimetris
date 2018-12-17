@@ -1,7 +1,7 @@
 var config = {
     type: Phaser.AUTO,
-    width: 10 * 64 + 1 ,
-    height: 550,
+    width: gameWidth+ 1 ,
+    height: gameHeight,
     // parent: document.getElementById("game"),
     scaleMode: Phaser.ScaleManager.SHOW_ALL,
 

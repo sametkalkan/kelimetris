@@ -3,9 +3,10 @@ var Game = {};
 
 var menuWidth = 300;
 var blockSize = 64; // px
-var numBlocksY = 12; // make the grid 19 blocks high
-var numBlocksX = 12; // make the grid 19 blocks wide
+var numBlocksY = 9; // make the grid 8 blocks high
+var numBlocksX = 10; // make the grid 10 blocks wide
 var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
+var gameHeight = numBlocksY * blockSize+50; // width of the grid in pixels
 
 var initial_row = 3;
 var initial_column=8;
