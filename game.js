@@ -3,14 +3,18 @@ var Game = {};
 
 var menuWidth = 300;
 var blockSize = 64; // px
-var numBlocksY = 12; // make the grid 19 blocks high
-var numBlocksX = 12; // make the grid 19 blocks wide
+var numBlocksY = 9; // make the grid 8 blocks high
+var numBlocksX = 10; // make the grid 10 blocks wide
 var gameWidth = numBlocksX * blockSize; // width of the grid in pixels
-var initial_row=7;
-var initial_column=8;
-var txtBox;
+var gameHeight = numBlocksY * blockSize+50; // width of the grid in pixels
 
-var block_colors = ['blue_block', 'green_block', 'red_block', 'yellow_block'];
+var initial_row = 3;
+var initial_column=8;
+
+var txtBox;
+var gameOverTxtBox;
+
+var block_colors = ['blue_block', 'green_block', 'red_block', 'purple_block'];
 
 var scoreTitle, scoreText, timer, loop;
 var score = 0;
@@ -38,15 +42,16 @@ Game.create = function () {
 
     game.add.plugin(PhaserInput.Plugin);
 
-    isGameOver = false;
 
     createElements();
 
     createSounds();  // creates the sounds
 
+    // init_words
+    init_words();
+
     init_blocks(initial_row, initial_column, 700);
 
-    getWords();
 
 };
 
@@ -63,15 +68,16 @@ Game.update = function () {
     function collision_handler(block1, block2){
         block1.body.immovable = true;
         block2.body.immovable = true;
+
     }
 
     /**
      * falls blocks over the killed blocks.
      */
     function makeMovable() {
-        for(var i=0;i<blocks.length;i++){
+        for (let i = 0; i < blocks.length; i++) {
             blocks[i].body.immovable = false;
-            blocks[i].body.velocity.y = 300;
+            blocks[i].body.velocity.y = 300+blocks[i].body.y/100;
         }
     }
 
@@ -100,14 +106,21 @@ Game.update = function () {
             // blocks_to_be_killed[i].body.collideWorldBounds=false;
             // blocks_to_be_killed[i].body.checkCollision=false;
             var kill_block = blocks_to_be_killed[i];
-            var killTween = game.add.tween(kill_block.scale);
-            killTween.to({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
-            killTween.onComplete.addOnce(function () {
-                kill_block.kill();
+            var moweTween = game.add.tween(kill_block);
+            moweTween.to({x: 15, y: 25}, 50, Phaser.Easing.Linear.None);
+            // moweTween.onComplete.add(function () {
+            //
+            //
+            // }, this);
 
+            var scaleTween = game.add.tween(kill_block.scale);
+            scaleTween.to({x: 0, y: 0}, 500, Phaser.Easing.Linear.None);
+            scaleTween.onComplete.addOnce(function () {
+                kill_block.kill();
             }, this);
 
-            killTween.start();
+            moweTween.start();
+            scaleTween.start();
             // blocks_to_be_killed[i].kill();
             score += 50;
         }
@@ -116,31 +129,38 @@ Game.update = function () {
 
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
-        makeMovable();
 
-        //TODO this line is critical section. next instructors shouldn't be processed before this function is over.
-        createNextBlocks(Math.floor(Math.random() * 4) + 2);
-
-        // game.time.events.add(Phaser.Timer.SECOND*1.1, checkGameOver(), this);
-
+        makeMovable(createNextBlocks(Math.floor(Math.random() * 4) + 2));
     }
 
-    async function createNextBlocks(num) {
-        var pos = findPositions(num);
-        var keys = Object.keys(pos);
 
-        var j=0;
+    function getNewWords(num) {
 
-        for(var i=0;i<keys.length;i++) {
+        //TODO query is required, the words as many as the number of 'num' must be fetched.
+        let words = ["perde", "domates", "kulaklık", "yatak", "kelebek", "yılan", "ahtapot"];
+
+        return words.slice(0, num);
+    }
+
+    function createNextBlocks(num) {
+
+        let newWords = getNewWords(num)
+
+        let pos = findPositions(num, newWords);
+        let keys = Object.keys(pos);
+
+        let j=0;
+
+        let i;
+        for(i=0;i<keys.length;i++) {
             setTimeout( function timer(){
                 if (isGameOver) {
                     return;
                 }
 
-                var height = 1 + Math.floor(Math.random() * 2);
+                let height = 1 + Math.floor(Math.random() * 2);
                 let word = pos[keys[j]];
-                // console.log(keys[j]);
-                var width;
+                let width;
                 /* to determine block width */
                 if(word.length<=4)
                     width = 1;
@@ -149,35 +169,39 @@ Game.update = function () {
                 else if(word.length<=15)
                     width = 3;
 
-                var color = block_colors[Math.floor(Math.random() * 4)];
-                var block = createBlock(keys[j]*64, 0, width, height/2, color, word);
+                let color = block_colors[Math.floor(Math.random() * 4)];
+                let block = createBlock(keys[j]*64, 0, width, height/2, color, word);
                 blocks.push(block);
                 j++;
             }, i*300 );
 
+
         }
 
+        i++;
         setTimeout(function () {
             if((isGameOver=checkGameOver()))
                 processGameOver();
-        }, i*100);
+        }, i*300);
+
+        makeMovable();
     }
 
-    function remElement(arr, value) {
+    function removeElement(arr, value) {
         if(arr.indexOf(value)!==-1){
             arr.splice(arr.indexOf(value), 1);
         }
     }
 
-    function findPositions(num) {
-        var positions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11];
+    function findPositions(num, words) {
+        let positions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11];
 
-        var pos = {};
+        let pos = {};
 
-        for(var i=0;i<num;i++) {
-            var x = Math.floor(Math.random()*positions.length);
-            var word = findWord();
-            var width = 0;
+        for(let i=0;i<num;i++) {
+            let x = Math.floor(Math.random()*positions.length);
+            let word = findWord(words);
+            let width = 0;
             if(word.length<=4)
                 width = 1;
             else if(word.length<=10)
@@ -190,9 +214,9 @@ Game.update = function () {
                 continue;
             }
             pos[positions[x]] = word;
-            var s = positions[x];
+            let s = positions[x];
             for(let j=0;j<width;j++){
-                remElement(positions, s+j);
+                removeElement(positions, s+j);
             }
         }
         return pos;
@@ -211,41 +235,80 @@ Game.update = function () {
 
     function processGameOver() {
         isGameOver = true;
-        game.input.keyboard.enabled = false;
-        game.input.mouse.enabled = false;
+        txtBox.input.enabled = false;
+        // game.input.keyboard.enabled = false;
+        // game.input.mouse.enabled = false;
 
         Game.radio.music.pause();
         Game.radio.playSound(Game.radio.gameOverSound);
 
         makeShade();
-        var gameover = game.add.bitmapText(game.world.centerX, game.world.centerY, 'gameover',
+        var gameover = game.add.bitmapText(game.world.centerX, 100, 'videogame',
             'GAME OVER!', 50);
         gameover.anchor.setTo(0.5);
-        //TODO score is not appearing
-        var overall_score = game.add.bitmapText(game.world.centerX, game.world.centerY + 100, 'gameover',
-            'Your score is ' + score + ' !', 20);
-        overall_score.anchor.setTo(0.5);
-        game.paused = true;
 
-        // Display the form to input your name for the leaderboard
-        document.getElementById("name").style.display = "block";
+        // TODO score is not appearing because 'videogame.png' or 'gameover.png' do not contain numbers
+        var overall_score = game.add.bitmapText(game.world.centerX, 200, 'videogame',
+            'Your score is ' + score + ' !\n\n\nPlease Enter Your Name:\n\n', 20);
+        overall_score.anchor.setTo(0.5);
+
+        createGameOverTextBox(game.world.centerX-100, 250, 200);
+
+        game.paused = true;
 
     }
 
 
-// Puts a shade on the stage for the game over and pause screens
-function makeShade() {
-    shade = game.add.graphics(0, 0);
-    shade.beginFill(0x000000, 0.6);
-    shade.drawRect(0, 0, game.world.width, game.world.height);
-    shade.endFill();
-}
-    function findSimilarity(word) {
-        wordLabel.setText(word);
+    // Puts a shade on the stage for the game over and pause screens
+    function makeShade() {
+        shade = game.add.graphics(0, 0);
+        shade.beginFill(0x000000, 0.6);
+        shade.drawRect(0, 0, game.world.width, game.world.height);
+        shade.endFill();
+    }
+
+    function getTxtBlockDict() {
+        var txt_block_dict = {};
+        for(let i=0;i<blocks.length;i++){
+            txt_block_dict[blocks[i].txt] = blocks[i];
+        }
+        return txt_block_dict;
+    }
+
+    function getCurrentWords() {
+        var currentWords = [];
+        for(let i=0;i<blocks.length;i++){
+            currentWords.push(blocks[i].txt);
+        }
+        return currentWords;
+    }
+
+    function fetchSimilarity(inputWord, currentWords) {
+
+        //TODO similarty list will be fetched via query
+        var similarityList = ["perde", "domates", "kulaklık", "yatak", "kelebek", "yılan", "ahtapot"];
+
+        return similarityList;
+    }
+
+    function findSimilarity(inputWord) {
+        wordLabel.setText(inputWord);
+
+        var currentWords = getCurrentWords();
+
+        var similarityList = fetchSimilarity(inputWord, currentWords);
+
+        startExplodeProcess(similarityList);
+
+    }
+
+    //TODO shadow effects etc.
+    function startExplodeProcess(similarityList) {
+        
     }
 
     /**
-     * verilen bloğun aynı rekteki komşularını ve onların komşularını bulur.
+     * verilen bloğun aynı renkteki komşularını ve onların komşularını bulur.
      * bulma işlemini Depth First Search algoritması ile yapar.
      * @param block
      * @returns {any[]}
@@ -388,13 +451,13 @@ function makeShade() {
             for (let i=0; i<num; i++) {
                 setTimeout( function timer(){
                     var height = 1 + Math.floor(Math.random() * 2);
-                    var word = findWord();
+                    var word = findWord(this.words);
                     var width;
 
                     /* to determine block width */
                     if(word.length<=4)
                         width = 1;
-                    else if(word.length<=10)
+                    else if (word.length <= 10)
                         width = 2;
                     else if(word.length<=15)
                         width = 3;
@@ -426,28 +489,32 @@ function makeShade() {
         block.bounce = 0;
         block.body.velocity.y = 500;
         block.color = color;
-
+        block.txt = word;
         addWordToBlock(block, word);
 
         return block;
     }
-
+//TODO align
 function addWordToBlock(block, word) {
 
-    var word_width = 12.8*word.length;
+    var word_width = 10 * word.length;
 
-    var style = { font: "20px Arial", fill: "#ffffff", wordWrap: true, wordWrapWidth: block.width, align: "center"};
+    var style = {font: "20px Arial", fill: "#ffffff"};
 
+    // console.log(word+"\n");
+    // console.log(block.width+"\n");
+    // console.log(word_width+"\n");
+    // console.log((block.width-word_width)/2);
+    let text = game.add.text(((block.width - word_width) / 2) * (64 / block.width), block.height / 3.5, word, style);
+    text.scale.setTo(64/block.width, 64/block.height);
 
-    var text = game.add.text(10, block.height/3, word, style);
-    text.scale.setTo(1/(block.width/64), 1/(block.height/64));
     block.addChild(text);
 
 }
 
-function findWord() {
+function findWord(words) {
 
-        if(Math.floor(Math.random()*3)==1)  // for empty blocks
+        if(Math.floor(Math.random()*3)===1)  // for empty blocks
             return "";
 
         var i = Math.floor(Math.random()*words.length);
@@ -455,8 +522,7 @@ function findWord() {
         return content;
 }
 
-function getWords() {
-    var path = "assets/words.txt";
+function init_words() {
     //TODO words must be fetched via query
     words = "masa\n" +
         "tahta\n" +

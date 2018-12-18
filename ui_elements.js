@@ -38,7 +38,7 @@ function loadImages() {
     game.load.image('blue_block', 'assets/blue_unit.png');
     game.load.image('green_block', 'assets/green_unit.png');
     game.load.image('red_block', 'assets/red_unit.png');
-    game.load.image('yellow_block', 'assets/purple_unit.png');
+    game.load.image('purple_block', 'assets/purple_unit.png');
     game.load.image('ground', 'assets/ground.png');
     game.load.image('strip', 'assets/strip.jpg');
 
@@ -57,7 +57,7 @@ function loadSounds() {
 
 function createElements() {
     game.add.sprite(0, 0, 'sky');  // background image
-    strip = game.add.sprite(150, 25, 'strip');  // background image
+    strip = game.add.sprite(115, 65, 'strip');  // background image
     strip.scale.setTo(0.5, 0.25);
     createGround();
     soundOnOff();
@@ -93,7 +93,8 @@ function soundOnOff() {
 
 function createGround() {
     ground = game.add.sprite(0, game.world.height - 64  , 'ground');
-    game.physics.arcade.enable(ground);
+    game.physics.enable(ground, Phaser.Physics.ARCADE);
+    // ground.body.allowGravity = false;
     ground.body.immovable = true;
     ground.enableBody = true;
 }
@@ -101,6 +102,44 @@ function createGround() {
 function createLabelOnTheGround() {
     wordLabel = game.add.text(5, 3, "", {font: "20px Times New Roman", fill: "#ffffff", align: "center"});
     ground.addChild(wordLabel);
+}
+
+function createGameOverTextBox(x, y, w) {
+    gameOverTxtBox = game.add.inputField(x, y, {
+        font: '18px Arial',
+        fill: '#212121',
+        fontWeight: 'bold',
+        width: w,
+        padding: 5,
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 7,
+        placeHolder: 'Enter Your Name',
+        type: PhaserInput.InputType.text,
+        focusOutOnEnter: true,
+        blockInput: true
+    });
+    gameOverTxtBox.startFocus();
+    game.scale.refresh();
+    gameOverTxtBox.keyListener = gameOverTextBoxListener;
+}
+
+function gameOverTextBoxListener(evt) {
+    this.value = this.getFormattedText(this.domElement.value);
+
+    if (evt.keyCode === 13) {
+        //TODO after entering the name
+
+        this.resetText();
+        this.endFocus();
+        this.startFocus();
+        return;
+    }
+
+    this.updateText();
+    this.updateCursor();
+    this.updateSelection();
+    evt.preventDefault();
 }
 
 function createTextBox() {
@@ -118,7 +157,7 @@ function createTextBox() {
         focusOutOnEnter: true,
         blockInput: true
     });
-    // txtBox.startFocus();
+    txtBox.startFocus();
     game.scale.refresh();
     txtBox.keyListener = textBoxListener;
 }

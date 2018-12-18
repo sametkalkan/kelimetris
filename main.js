@@ -1,7 +1,7 @@
 var config = {
     type: Phaser.AUTO,
-    width: 12 * 64 + 1 ,
-    height: 590,
+    width: gameWidth+ 1 ,
+    height: gameHeight,
     // parent: document.getElementById("game"),
     scaleMode: Phaser.ScaleManager.SHOW_ALL,
 
@@ -41,5 +41,8 @@ function startGame() {
     game.state.start('Game');
 }
 function loadLeaderboard(){
+    //reloads the game
+    location.reload();
+
     game.state.start('Leaderboard');
 }
