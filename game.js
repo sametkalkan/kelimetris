@@ -248,8 +248,8 @@ Game.update = function () {
         gameover.anchor.setTo(0.5);
 
         // TODO score is not appearing because 'videogame.png' or 'gameover.png' do not contain numbers
-        var overall_score = game.add.bitmapText(game.world.centerX, 200, 'videogame',
-            'Your score is ' + score + ' !\n\n\nPlease Enter Your Name:\n\n', 20);
+        var overall_score = game.add.bitmapText(game.world.centerX, 150, 'desyrel',
+            '\n\n\t\t\t\t\t\tYour score is ' + score + ' \n\t\tPlease Enter Your Name', 40);
         overall_score.anchor.setTo(0.5);
 
         createGameOverTextBox(game.world.centerX-100, 250, 200);
