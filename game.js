@@ -29,6 +29,7 @@ var sound;  // background music
 var wordLabel;  // label on the ground
 
 var strip;
+let score_add;
 
 var isGameOver = false;
 
@@ -81,7 +82,11 @@ Game.update = function () {
         }
     }
 
-    /**
+function removeText() {
+    score_add.destroy();
+}
+
+/**
      * tıklanan blokla aynı renkteki tüm blokları siler.
      * @param block
      */
@@ -92,7 +97,6 @@ Game.update = function () {
         blocks.inputEnabled = false;
         var same_color_blocks = findSameColorBlock(block);  // aynı renkteki blokları getirir.
         var blocks_to_be_killed = findNeighborsChain(block, same_color_blocks);
-
         for(var i=0;i<blocks_to_be_killed.length;i++){
             //console.log(blocks_to_be_killed[i].i);
             // var tween = game.add.tween(sceneSprites[k][line]);
@@ -105,22 +109,41 @@ Game.update = function () {
             //
             // blocks_to_be_killed[i].body.collideWorldBounds=false;
             // blocks_to_be_killed[i].body.checkCollision=false;
+
+            //--------------------Block Animation-------------------------------
             var kill_block = blocks_to_be_killed[i];
-            var moweTween = game.add.tween(kill_block);
-            moweTween.to({x: 15, y: 25}, 50, Phaser.Easing.Linear.None);
-            // moweTween.onComplete.add(function () {
+            var moveTween = game.add.tween(kill_block);
+            moveTween.to({x: scoreText.x+10, y: scoreText.y+15}, 100, Phaser.Easing.Linear.None);
+            // moveTween.onComplete.add(function () {
             //
             //
             // }, this);
-
             var scaleTween = game.add.tween(kill_block.scale);
             scaleTween.to({x: 0, y: 0}, 500, Phaser.Easing.Linear.None);
             scaleTween.onComplete.addOnce(function () {
                 kill_block.kill();
             }, this);
 
-            moweTween.start();
+            //--------------------+50 Animation---------------------------------
+            score_add = game.add.bitmapText(blocks_to_be_killed[i].x, blocks_to_be_killed[i].y, 'desyrel',
+                '+50', 30);
+            score_add.anchor.setTo(0.5);
+            let moveScore = game.add.tween(score_add);
+            moveScore.to({x: 0, y: -20}, 700, Phaser.Easing.Linear.None);
+            // moveScore.onComplete.addOnce(function () {
+            //     score_add.destroy();
+            // }, this);
+
+
+
+
+
+
+            moveTween.start();
             scaleTween.start();
+            moveScore.start();
+            // scaleScore.start();
+
             // blocks_to_be_killed[i].kill();
             score += 50;
         }
@@ -247,7 +270,6 @@ Game.update = function () {
             'GAME OVER!', 50);
         gameover.anchor.setTo(0.5);
 
-        // TODO score is not appearing because 'videogame.png' or 'gameover.png' do not contain numbers
         var overall_score = game.add.bitmapText(game.world.centerX, 150, 'desyrel',
             '\n\n\t\t\t\t\t\tYour score is ' + score + ' \n\t\tPlease Enter Your Name', 40);
         overall_score.anchor.setTo(0.5);
