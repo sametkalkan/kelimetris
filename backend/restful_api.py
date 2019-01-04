@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import sqlite3
+import numpy as np
+from random import sample
+
 import sys
 
 from flask import Flask, request, jsonify
@@ -19,6 +22,9 @@ sys.setdefaultencoding('utf-8')
 database_name = "kelimetris.db"
 table_name="vectors"
 
+words_list = []
+
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -29,29 +35,49 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     return response
 
-@app.route('/',methods=['POST'])
-def get():
-    args = request.get_json()
 
-    input_word = list()
-    word_list = list()
 
-    input_word.append(args.get('word').encode())
-    for i in args.get('words').split(','):
-        word_list.append(i.encode())
-    conn = sqlite3.connect(database_name)
-    print(input_word)
-    word_sql = conn.execute(cosine.convert_query(input_word))
-    list_sql = conn.execute(cosine.convert_query(word_list))
 
-    result = cosine.find_all_cosine(word_sql,list_sql)
-    response = jsonify(output=list(result))
+@app.route('/',methods=['POST', 'GET'])
+def post():
 
-    conn.close()
+    if(request.method == 'POST'):
+        args = request.get_json()
+        print(args)
 
-    return response
+        input_word = list()
+        word_list = list()
+
+        print(args.get("words").encode())
+        input_word.append(args.get("word").encode())
+
+        for i in args.get("words").split(','):
+            word_list.append((i.split('\n')[0]).encode())
+
+
+        print(word_list)
+        print(input_word)
+
+        conn = sqlite3.connect(database_name)
+
+        word_sql = conn.execute(cosine.convert_query(input_word))
+        list_sql = conn.execute(cosine.convert_query(word_list))
+
+        result = cosine.find_all_cosine(word_sql,list_sql)
+        print(result);
+        response = jsonify(output=list(result))
+        print("onur " + result[0])
+        conn.close()
+        print(response)
+        return response
+    else:
+        return jsonify(output=words_list)
 
 
 if __name__ == '__main__':
+    f = open("nouns.txt", "r")
+    words_list = f.readlines()
+    f.close()
+    words_list = sample(words_list, len(words_list))
     app.run(host='0.0.0.0',debug=True)
 

@@ -39,23 +39,26 @@ def convert_query(words):
 
 def find_all_cosine(one, all):
     word_value = one.fetchone()
-    mainword = word_value[1]           # this is word
+    mainword = word_value[1]            # this is word
     vect_of_mainword = []               # this is vector that of word
     array = dict()
     for vec in word_value[2].split(' '):
         vect_of_mainword.append(float(vec))
+    print(vect_of_mainword);
     #-----------------------------------------------#
     for row in all:
+        print(row);
         vect_of_word = []
         for vec in row[2].split(' '):
             vect_of_word.append(float(vec))
-
         array[row[1].encode()] = repr(cosine_similarity(vect_of_mainword, vect_of_word, 200))
-
+    print(array);
     sorted_array = sorted(array.items(), key = operator.itemgetter(1))
+    print(sorted_array);
     result = []
-    for element in sorted_array:
-        result.append(element[0])
+
+    for i in range(len(sorted_array)-1,0,-1):
+        result.append(sorted_array[i][0])
     return result
 
 

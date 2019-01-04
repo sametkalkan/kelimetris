@@ -1,4 +1,6 @@
 
+var xmlhttp = new XMLHttpRequest();
+
 var Game = {};
 
 var menuWidth = 300;
@@ -20,7 +22,7 @@ var scoreTitle, scoreText, timer, loop;
 var score = 0;
 
 var words = [];
-
+var liste = [];
 var blocks = [];  // existing block on the screen
 
 var ground;
@@ -91,6 +93,7 @@ function removeText() {
      * @param block
      */
     function blockClick(block) {
+
         if (isGameOver) {
             return;
         }
@@ -158,32 +161,41 @@ function removeText() {
 
 
     function getNewWords(num) {
-
+        var similarityList = []
+        for(var i = 0; i < 10; i++){
+            var word = findWord(this.words);
+            if(containsObject(word.split('\n')[0], blocks)){
+                i--;
+            }
+            else{
+                similarityList.push(word);
+            }
+        }
         //TODO query is required, the words as many as the number of 'num' must be fetched.
-        let words = ["perde", "domates", "kulaklık", "yatak", "kelebek", "yılan", "ahtapot"];
+        //let words = ["perde", "domates", "kulaklık", "yatak", "kelebek", "yılan", "ahtapot"];
 
-        return words.slice(0, num);
+        return similarityList.slice(0, num);
     }
 
     function createNextBlocks(num) {
 
-        let newWords = getNewWords(num)
+        var newWords = getNewWords(num)
 
-        let pos = findPositions(num, newWords);
-        let keys = Object.keys(pos);
+        var pos = findPositions(num, newWords);
+        var keys = Object.keys(pos);
 
-        let j=0;
+        var j=0;
 
-        let i;
+        var i;
         for(i=0;i<keys.length;i++) {
             setTimeout( function timer(){
                 if (isGameOver) {
                     return;
                 }
 
-                let height = 1 + Math.floor(Math.random() * 2);
-                let word = pos[keys[j]];
-                let width;
+                var height = 1 + Math.floor(Math.random() * 2);
+                var word = pos[keys[j]];
+                var width;
                 /* to determine block width */
                 if(word.length<=4)
                     width = 1;
@@ -192,13 +204,11 @@ function removeText() {
                 else if(word.length<=15)
                     width = 3;
 
-                let color = block_colors[Math.floor(Math.random() * 4)];
-                let block = createBlock(keys[j]*64, 0, width, height/2, color, word);
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var block = createBlock(keys[j]*64, 0, width, height/2, color, word);
                 blocks.push(block);
                 j++;
             }, i*300 );
-
-
         }
 
         i++;
@@ -308,13 +318,78 @@ function removeText() {
     function fetchSimilarity(inputWord, currentWords) {
 
         //TODO similarty list will be fetched via query
-        var similarityList = ["perde", "domates", "kulaklık", "yatak", "kelebek", "yılan", "ahtapot"];
+
+        var similarityList = []
+        for(var i = 0; i < 10; i++){
+            var word = findWord(this.words);
+            if(containsObject(word.split('\n')[0], blocks)){
+                i--;
+            }
+        }
+        //var similarityList = ["perde", "domates", "kulaklık", "yatak", "kelebek", "yılan", "ahtapot"];
 
         return similarityList;
     }
 
     function findSimilarity(inputWord) {
+
+        /* 1 ekrandaki blockların üstündeki kelimleri çek  bunları json dosyasının words'une aktar */
+
+        /* bitti */ /* text'e girilen kelimeyi çek bunu da json dosyasının word kısmına aktar */
+
+        /* post ile gönder ve gelen sonuca ait bloğu buluğ onu patlat */
+
+        var name = "";
+        var flag = 0;
+
+        for(var i = 0; i < blocks.length; i++){
+            if(blocks[i].txt != ""){
+                name +=  blocks[i].txt + ",";
+            }
+        }
+
+        if(name[name.length - 1] == ','){
+            name = name.slice(0, name.length - 1);
+        }
+
+        /*blocks.forEach(function(element) {
+
+            if(element.txt != '')
+                name += element.txt + ',';
+        });*/
+
         wordLabel.setText(inputWord);
+
+        //window.alert(name);
+
+        //window.alert(JSON.stringify({word:"word", words:"ya,moruk,hey"}));
+
+        //window.alert(JSON.stringify({word:inputWord, words:name}));
+
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                if(xmlhttp.response != null){
+                     var liste = JSON.parse(xmlhttp.response)
+                     liste = liste.output;
+                     //window.alert(liste[0]);
+                     for(var i = 0; i < blocks.length; i++){
+                        var temp = blocks[i].txt;
+
+
+                        if(temp.split("\n")[0] == liste[0] && !containsObject(inputWord, blocks)){
+                            window.alert(blocks[i].txt);
+                            blockClick(blocks[i]);
+                        }
+                     }
+
+                }
+            }
+        };
+        xmlhttp.open("POST", "http://0.0.0.0:5000/");
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(JSON.stringify({word:inputWord, words:name}));
+
 
         var currentWords = getCurrentWords();
 
@@ -324,9 +399,25 @@ function removeText() {
 
     }
 
+
+    function containsObject(obj, list) {
+        var i;
+
+        for (i = 0; i < list.length; i++){
+            var temp = blocks[i].txt;
+
+            if (temp.split("\n")[0] == obj){
+            return true;
+            }
+
+        }
+
+        return false;
+    }
+
     //TODO shadow effects etc.
     function startExplodeProcess(similarityList) {
-        
+
     }
 
     /**
@@ -470,29 +561,28 @@ function removeText() {
 
     function createBlocks(num) {
         var sum = 0;
-            for (let i=0; i<num; i++) {
-                setTimeout( function timer(){
-                    var height = 1 + Math.floor(Math.random() * 2);
-                    var word = findWord(this.words);
-                    var width;
+        for (let i=0; i<num; i++) {
+            setTimeout( function timer(){
+                var height = 1 + Math.floor(Math.random() * 2);
+                var word = findWord(this.words);
+                /* word değişkeni bize ilk başta düşen kelimeleri verecek */
+                var width;
 
-                    /* to determine block width */
-                    if(word.length<=4)
-                        width = 1;
-                    else if (word.length <= 10)
-                        width = 2;
-                    else if(word.length<=15)
-                        width = 3;
+                /* to determine block width */
+                if(word.length<=4)                    width = 1;
+                else if (word.length <= 10)           width = 2;
+                else if(word.length<=15)              width = 3;
 
-                    if(sum*64+width*64>=game.world.width)
-                        return;
+                if(sum*64+width*64>=game.world.width)
+                    return;
 
-                    var color = block_colors[Math.floor(Math.random() * 4)];
-                    var block = createBlock(sum*64, -64, width, height/2, color, word);
+                var color = block_colors[Math.floor(Math.random() * 4)];
+                var block = createBlock(sum*64, -64, width, height/2, color, word);
 
-                    blocks.push(block);
+                blocks.push(block);
 
-                    sum+=width;
+                sum+=width;
+
                 }, i*100 );
             }
     }
@@ -516,72 +606,100 @@ function removeText() {
 
         return block;
     }
-//TODO align
-function addWordToBlock(block, word) {
+    //TODO align
+    function addWordToBlock(block, word) {
 
-    var word_width = 10 * word.length;
+        var word_width = 10 * word.length;
 
-    var style = {font: "20px Arial", fill: "#ffffff"};
+        var style = {font: "20px Arial", fill: "#ffffff"};
 
-    // console.log(word+"\n");
-    // console.log(block.width+"\n");
-    // console.log(word_width+"\n");
-    // console.log((block.width-word_width)/2);
-    let text = game.add.text(((block.width - word_width) / 2) * (64 / block.width), block.height / 3.5, word, style);
-    text.scale.setTo(64/block.width, 64/block.height);
+        // console.log(word+"\n");
+        // console.log(block.width+"\n");
+        // console.log(word_width+"\n");
+        // console.log((block.width-word_width)/2);
+        let text = game.add.text(((block.width - word_width) / 2) * (64 / block.width), block.height / 3.5, word, style);
+        text.scale.setTo(64/block.width, 64/block.height);
 
-    block.addChild(text);
+        block.addChild(text);
 
-}
+    }
 
-function findWord(words) {
+    function findWord(words) {
 
-        if(Math.floor(Math.random()*3)===1)  // for empty blocks
-            return "";
+            if(Math.floor(Math.random()*3)===1)  // for empty blocks
+                return "";
 
-        var i = Math.floor(Math.random()*words.length);
-        var content = words[i];
-        return content;
-}
+            var i = Math.floor(Math.random()*words.length);
+            var content = words[i];
+            return content;
+    }
 
-function init_words() {
-    //TODO words must be fetched via query
-    words = "masa\n" +
-        "tahta\n" +
-        "kalem\n" +
-        "silgi\n" +
-        "pencere\n" +
-        "kablo\n" +
-        "ahtapot\n" +
-        "kedi\n" +
-        "köpek\n" +
-        "endüstri\n" +
-        "tabela\n" +
-        "rozet\n" +
-        "mouse\n" +
-        "bayrak\n" +
-        "koltuk\n" +
-        "kanepe\n" +
-        "televizyon\n" +
-        "bina\n" +
-        "inşaat\n" +
-        "vinç\n" +
-        "perde\n" +
-        "saat\n" +
-        "lastik\n" +
-        "teker\n" +
-        "tekerlek\n" +
-        "tuş\n" +
-        "askı\n" +
-        "turşu\n" +
-        "patlıcan\n" +
-        "domates\n" +
-        "biber\n" +
-        "kumanda\n" +
-        "asker\n" +
-        "hırka"
 
-    this.words = words.split("\n");
-}
+    function init_words() {
+
+
+        fetch("http://0.0.0.0:5000/", {
+            method : "GET",
+            // body: new FormData(document.getElementById("inputform")),
+            // -- or --
+            // body : JSON.stringify({
+            // user : document.getElementById('user').value,
+            // ...
+            // })
+        }).then(
+             function(response) {
+                // window.alert(JSON.parse(response).output);
+                var list = response.json().then(function (value) {
+                    this.words = value.output;
+
+                });
+            }
+        ).then(
+            //window.alert("HATAA")
+            // html => console.log(html)
+        );
+
+
+
+        //TODO words must be fetched via query
+        /**words = "masa\n" +
+            "tahta\n" +
+            "kalem\n" +
+            "silgi\n" +
+            "pencere\n" +
+            "kablo\n" +
+            "ahtapot\n" +
+            "kedi\n" +
+            "köpek\n" +
+            "endüstri\n" +
+            "tabela\n" +
+            "rozet\n" +
+            "mouse\n" +
+            "bayrak\n" +
+            "koltuk\n" +
+            "kanepe\n" +
+            "televizyon\n" +
+            "bina\n" +
+            "inşaat\n" +
+            "vinç\n" +
+            "perde\n" +
+            "saat\n" +
+            "lastik\n" +
+            "teker\n" +
+            "tekerlek\n" +
+            "tuş\n" +
+            "askı\n" +
+            "turşu\n" +
+            "patlıcan\n" +
+            "domates\n" +
+            "biber\n" +
+            "kumanda\n" +
+            "asker\n" +
+            "hırka"
+        this.words = words.split("\n");*/
+        // window.alert("+++" + liste);
+        //
+        // window.alert("-- " + words);
+    }
 
 
