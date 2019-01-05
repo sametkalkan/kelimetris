@@ -4,8 +4,10 @@ import math
 import sqlite3
 import operator
 import sys
+
+from importlib import reload
 reload(sys)
-sys.setdefaultencoding('utf-8')
+# sys.setdefaultencoding('utf-8')
 
 
 
@@ -27,9 +29,9 @@ def convert_query(words):
     for i in range((len(words))):
         words[i] =  words[i].strip()
         if (i == len(words) - 1):
-            temp_list += "\'" + words[i] + "\'"
+            temp_list += "\'" + words[i].decode("utf-8")  + "\'"
         else:
-            temp_list += "\'" + words[i] + "\', "
+            temp_list += "\'" + words[i].decode("utf-8")  + "\', "
 
     return "SELECT * FROM vectors where name IN (" + temp_list + ")"
 

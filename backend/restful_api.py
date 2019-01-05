@@ -13,10 +13,10 @@ from flask import make_response, request, current_app
 from functools import update_wrapper
 
 import cosine
-
+from importlib import reload
 
 reload(sys)
-sys.setdefaultencoding('utf-8')
+# sys.setdefaultencoding('utf-8')
 
 
 database_name = "kelimetris.db"
@@ -43,20 +43,20 @@ def post():
 
     if(request.method == 'POST'):
         args = request.get_json()
-        print(args)
+        print("1----", args)
 
         input_word = list()
         word_list = list()
 
-        print(args.get("words").encode())
+        print("2----", args.get("words").encode())
         input_word.append(args.get("word").encode())
 
         for i in args.get("words").split(','):
             word_list.append((i.split('\n')[0]).encode())
 
 
-        print(word_list)
-        print(input_word)
+        print("3----", word_list)
+        print("4----", input_word)
 
         conn = sqlite3.connect(database_name)
 
@@ -64,7 +64,8 @@ def post():
         list_sql = conn.execute(cosine.convert_query(word_list))
 
         result = cosine.find_all_cosine(word_sql,list_sql)
-        print(result);
+        print("5----", result);
+        result = [word.decode('utf-8') for word in result]  # bytes list to string list
         response = jsonify(output=list(result))
         print("onur " + result[0])
         conn.close()

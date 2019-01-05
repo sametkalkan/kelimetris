@@ -92,7 +92,7 @@ function removeText() {
      * tıklanan blokla aynı renkteki tüm blokları siler.
      * @param block
      */
-    function blockClick(block) {
+    async function blockClick(block) {
 
         if (isGameOver) {
             return;
@@ -100,6 +100,12 @@ function removeText() {
         blocks.inputEnabled = false;
         var same_color_blocks = findSameColorBlock(block);  // aynı renkteki blokları getirir.
         var blocks_to_be_killed = findNeighborsChain(block, same_color_blocks);
+
+        await sleep(1000);
+        for(let j=0;j<blocks_to_be_killed.length;j++){
+            reverseShade(blocks_to_be_killed[j]);
+        }
+        await sleep(1000);
         for(var i=0;i<blocks_to_be_killed.length;i++){
             //console.log(blocks_to_be_killed[i].i);
             // var tween = game.add.tween(sceneSprites[k][line]);
@@ -155,7 +161,10 @@ function removeText() {
 
         Game.radio.playSound(Game.radio.winSound);
         this.scoreText.setText(score);
-
+        await sleep(1000);
+        for(let j=0;j<blocks.length;j++){
+            reverseShade(blocks[j]);
+        }
         makeMovable(createNextBlocks(Math.floor(Math.random() * 4) + 2));
     }
 
@@ -379,7 +388,8 @@ function removeText() {
 
                         if(temp.split("\n")[0] == liste[0] && !containsObject(inputWord, blocks)){
                             window.alert(blocks[i].txt);
-                            blockClick(blocks[i]);
+                            makeBlocksShade(i);
+                            // blockClick(blocks[i]);
                         }
                      }
 
@@ -396,6 +406,46 @@ function removeText() {
         var similarityList = fetchSimilarity(inputWord, currentWords);
 
         startExplodeProcess(similarityList);
+
+    }
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+async function makeBlocksShade(top) {
+
+        for(let j=0;j<blocks.length;j++){
+            setTimeout( function timer(){
+                if(top!==j)
+                    makeOneBlockShade(blocks[j]);
+            }, j * 100);
+        }
+        await sleep(3000);
+        blockClick(blocks[top]);
+        await sleep(2000);
+        // for(let j=i;j<blocks.length+i;j++){
+        //     setTimeout( function timer(){
+        //         reverseShade(blocks[j-i]);
+        //     }, j * 100);
+        // }
+
+    }
+
+    function makeOneBlockShade(block) {
+        game.time.events.add(0, function() {
+            // game.add.tween(block).to({y: 0}, 1500, Phaser.Easing.Linear.None, true);
+            game.add.tween(block).to({alpha: 500}, 1, Phaser.Easing.Linear.None, true);
+        }, this);
+
+    }
+
+    function reverseShade(block) {
+        // game.time.events.add(0, function() {
+            game.add.tween(block).to({alpha: 1}, 1, Phaser.Easing.Linear.None).start();
+            // game.add.tween(block).to({alpha: 500}, 1, Phaser.Easing.Linear.None, true);
+        // }, this);
 
     }
 
