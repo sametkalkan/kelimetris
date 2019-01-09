@@ -340,7 +340,26 @@ function removeText() {
         return similarityList;
     }
 
+    async function blink(block){
+        game.time.events.add(100, function() {
+            // game.add.tween(block).to({y: 0}, 1500, Phaser.Easing.Linear.None, true);
+            game.add.tween(block).to({alpha: 300}, 300, Phaser.Easing.Linear.None, true);
+        }, this);
+        await sleep(600);
+        reverseShade(block);
+    }
+
     function findSimilarity(inputWord) {
+
+        let block = null;
+        for(let i=0;i<blocks.length;i++){
+            if(blocks[i].txt.trim()===inputWord.trim()){
+                block = blocks[i];
+                blink(block);
+                return;
+            }
+        }
+
 
         /* 1 ekrandaki blockların üstündeki kelimleri çek  bunları json dosyasının words'une aktar */
 
@@ -380,6 +399,10 @@ function removeText() {
             if (this.readyState == 4 && this.status == 200) {
                 if(xmlhttp.response != null){
                      var liste = JSON.parse(xmlhttp.response)
+                     if(liste.output.length==0){
+                         window.alert("Benzer kelime bulunamadı. Başka bir kelime deneyin.");
+                         return;
+                     }
                      liste = liste.output;
                      //window.alert(liste[0]);
                      for(var i = 0; i < blocks.length; i++){
@@ -442,10 +465,10 @@ async function makeBlocksShade(top) {
     }
 
     function reverseShade(block) {
-        // game.time.events.add(0, function() {
+        game.time.events.add(0, function() {
             game.add.tween(block).to({alpha: 1}, 1, Phaser.Easing.Linear.None).start();
             // game.add.tween(block).to({alpha: 500}, 1, Phaser.Easing.Linear.None, true);
-        // }, this);
+        }, this);
 
     }
 
