@@ -132,7 +132,8 @@ function gameOverTextBoxListener(evt) {
         this.resetText();
         this.endFocus();
         this.startFocus();
-        location.reload(false);
+        // location.reload(false);
+        game.state.start('Game');
         return;
     }
 
