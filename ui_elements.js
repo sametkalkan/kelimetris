@@ -129,10 +129,10 @@ function gameOverTextBoxListener(evt) {
 
     if (evt.keyCode === 13) {
         //TODO after entering the name
-
         this.resetText();
         this.endFocus();
         this.startFocus();
+        location.reload(false);
         return;
     }
 
