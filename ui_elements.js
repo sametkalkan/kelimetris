@@ -40,7 +40,7 @@ function loadImages() {
     game.load.image('red_block', 'assets/red_unit.png');
     game.load.image('purple_block', 'assets/purple_unit.png');
     game.load.image('ground', 'assets/ground.png');
-    game.load.image('strip', 'assets/strip.jpg');
+    game.load.image('strip', 'assets/strip.png');
 
     game.load.bitmapFont('desyrel', 'assets/fonts/desyrel.png', 'assets/fonts/desyrel.xml');
 

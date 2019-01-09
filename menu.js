@@ -12,6 +12,7 @@ Menu.preload = function () {
     game.scale.setMinMax(game.width / 10, game.height / 10, game.width, game.height);
     // game.scale.pageAlignHorizontally = false;game.scale.pageAlignVertically = true;
     game.scale.compatibility.forceMinimumDocumentHeight = true;
+    game.stage.backgroundColor = "#1B002D";
     game.scale.refresh();
 };
 
