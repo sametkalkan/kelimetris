@@ -365,6 +365,8 @@ function removeText() {
     }
 
     function lower(word) {
+        var letters = { "İ": "i", "I": "ı", "Ş": "ş", "Ğ": "ğ", "Ü": "ü", "Ö": "ö", "Ç": "ç" };
+        word = word.replace(/(([İIŞĞÜÇÖ]))/g, function(letter){ return letters[letter]; })
         return word.toLowerCase();
     }
     function lowerFirstCase(word) {
@@ -451,7 +453,7 @@ function removeText() {
 
 
                         if(temp.split("\n")[0] == liste[0] && !containsObject(inputWord, blocks)){
-                            window.alert(lowerFirstCase(blocks[i].txt));
+                            //window.alert(lowerFirstCase(blocks[i].txt));
                             makeBlocksShade(i);
                             // blockClick(blocks[i]);
                         }
