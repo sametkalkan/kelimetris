@@ -349,6 +349,18 @@ function removeText() {
         reverseShade(block);
     }
 
+    function getBlock(txt) {
+        for(let i=0;i<blocks.length;i++)
+            if(blocks[i].txt.trim()===txt)
+                return blocks[i];
+            return -1;
+    }
+
+    function cleanWord(word) {
+        // for(let)
+        // word = word.replace(w)
+    }
+
     function findSimilarity(inputWord) {
 
         let block = null;
@@ -399,6 +411,11 @@ function removeText() {
             if (this.readyState == 4 && this.status == 200) {
                 if(xmlhttp.response != null){
                      var liste = JSON.parse(xmlhttp.response)
+                     if(liste.hata !== "null" ){
+                         let block = getBlock(liste.hata.trim());
+                         blink(block);
+                         return;
+                     }
                      if(liste.output.length==0){
                          window.alert("Benzer kelime bulunamadı. Başka bir kelime deneyin.");
                          return;

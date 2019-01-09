@@ -2,7 +2,6 @@
 import sqlite3
 import numpy as np
 from random import sample
-
 import sys
 
 from flask import Flask, request, jsonify
@@ -14,7 +13,8 @@ from functools import update_wrapper
 
 import cosine
 from importlib import reload
-
+from string import punctuation
+import snowballstemmer
 reload(sys)
 # sys.setdefaultencoding('utf-8')
 
@@ -24,7 +24,7 @@ table_name="vectors"
 
 words_list = []
 
-
+stemmer = snowballstemmer.stemmer('turkish')
 app = Flask(__name__)
 api = Api(app)
 
@@ -36,7 +36,17 @@ def after_request(response):
     return response
 
 
-
+def check_same_stem(word, word_list):
+    for i in word_list:
+        wrd = word[0].decode('utf-8').strip()
+        for p in punctuation:
+            wrd = wrd.replace(p, "")
+        ii = i.decode('utf-8').strip()
+        stem_wrd = stemmer.stemWord(wrd)
+        # stem_ii = stemmer.stemWord(ii)
+        if stem_wrd == ii:
+            return i
+    return -1
 
 @app.route('/',methods=['POST', 'GET'])
 def post():
@@ -48,12 +58,17 @@ def post():
         input_word = list()
         word_list = list()
 
+
+
         print("2----", args.get("words").encode())
         input_word.append(args.get("word").encode())
 
         for i in args.get("words").split(','):
             word_list.append((i.split('\n')[0]).encode())
 
+        wrd = check_same_stem(input_word, word_list)
+        if wrd != -1:
+            return jsonify(hata=wrd)
 
         print("3----", word_list)
         print("4----", input_word)
@@ -66,7 +81,7 @@ def post():
         result = cosine.find_all_cosine(word_sql,list_sql)
         print("5----", result);
         result = [word.decode('utf-8') for word in result]  # bytes list to string list
-        response = jsonify(output=list(result))
+        response = jsonify(output=list(result),hata="null")
         print("onur " + result[0])
         conn.close()
         print(response)
