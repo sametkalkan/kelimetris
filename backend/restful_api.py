@@ -53,14 +53,14 @@ def post():
 
     if(request.method == 'POST'):
         args = request.get_json()
-        print("1----", args)
+        #print("1----", args)
 
         input_word = list()
         word_list = list()
 
 
 
-        print("2----", args.get("words").encode())
+        #print("2----", args.get("words").encode())
         input_word.append(args.get("word").encode())
 
         for i in args.get("words").split(','):
@@ -70,30 +70,32 @@ def post():
         if wrd != -1:
             return jsonify(hata=wrd)
 
-        print("3----", word_list)
-        print("4----", input_word)
+
+        #print("3----", word_list)
+        #print("4----", input_word)
 
         conn = sqlite3.connect(database_name)
+        if conn.execute(cosine.isExistSQL(input_word[0])).fetchone() == None:
+            return jsonify(none="none")
 
         word_sql = conn.execute(cosine.convert_query(input_word))
         list_sql = conn.execute(cosine.convert_query(word_list))
 
         result = cosine.find_all_cosine(word_sql,list_sql)
-        print("5----", result);
+        #print("5----", result);
         result = [word.decode('utf-8') for word in result]  # bytes list to string list
         response = jsonify(output=list(result),hata="null")
-        print("onur " + result[0])
+        #print("onur " + result[0])
         conn.close()
-        print(response)
+        #print(response)
         return response
     else:
         return jsonify(output=words_list)
 
 
 if __name__ == '__main__':
-    f = open("nouns.txt", "r")
+    f = open("nouns2.txt", "r")
     words_list = f.readlines()
     f.close()
     words_list = sample(words_list, len(words_list))
     app.run(host='0.0.0.0',debug=True)
-

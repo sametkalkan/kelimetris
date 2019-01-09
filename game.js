@@ -311,7 +311,7 @@ function removeText() {
     function getTxtBlockDict() {
         var txt_block_dict = {};
         for(let i=0;i<blocks.length;i++){
-            txt_block_dict[blocks[i].txt] = blocks[i];
+            txt_block_dict[lowerFirstCase(blocks[i].txt)] = blocks[i];
         }
         return txt_block_dict;
     }
@@ -319,7 +319,7 @@ function removeText() {
     function getCurrentWords() {
         var currentWords = [];
         for(let i=0;i<blocks.length;i++){
-            currentWords.push(blocks[i].txt);
+            currentWords.push(lowerFirstCase(blocks[i].txt));
         }
         return currentWords;
     }
@@ -351,26 +351,44 @@ function removeText() {
 
     function getBlock(txt) {
         for(let i=0;i<blocks.length;i++)
-            if(blocks[i].txt.trim()===txt)
+            if(lowerFirstCase(blocks[i].txt.trim())===txt)
                 return blocks[i];
             return -1;
     }
 
     function cleanWord(word) {
-        // for(let)
-        // word = word.replace(w)
+        var punc = '.,:;~!^+%*-_?!+%&/()=?'
+        for(let j=0;j<word.length;j++)
+            for(let i=0;i<punc.length;i++)
+                word = word.replace(punc[i], '')
+        return word
+    }
+
+    function lower(word) {
+        return word.toLowerCase();
+    }
+    function lowerFirstCase(word) {
+        if (word.length !== 0) {
+            return word.charAt(0).toLowerCase() + word.slice(1);
+        }
+        return "";
     }
 
     function findSimilarity(inputWord) {
-
+        inputWord = lower(inputWord);
         let block = null;
         for(let i=0;i<blocks.length;i++){
-            if(blocks[i].txt.trim()===inputWord.trim()){
+            let inptt = cleanWord(inputWord.trim())
+            if(lowerFirstCase(blocks[i].txt.trim())===inptt){
                 block = blocks[i];
                 blink(block);
+                wordLabel.setText(inptt + " - Ekranda bulanan kelimleri kullanamazsınız!");
+                wordLabel.fill = "#ff0018";
                 return;
             }
         }
+
+        wordLabel.fill = "#ffffff";
 
 
         /* 1 ekrandaki blockların üstündeki kelimleri çek  bunları json dosyasının words'une aktar */
@@ -383,8 +401,8 @@ function removeText() {
         var flag = 0;
 
         for(var i = 0; i < blocks.length; i++){
-            if(blocks[i].txt != ""){
-                name +=  blocks[i].txt + ",";
+            if(lowerFirstCase(blocks[i].txt) != ""){
+                name +=  lowerFirstCase(blocks[i].txt) + ",";
             }
         }
 
@@ -411,11 +429,17 @@ function removeText() {
             if (this.readyState == 4 && this.status == 200) {
                 if(xmlhttp.response != null){
                      var liste = JSON.parse(xmlhttp.response)
+                    console.log("------------------");
+                    if(liste.none==="none"){
+                        window.alert("Benzer kelime bulunamadı. Başka bir kelime deneyin.");
+                        return;
+                    }
                      if(liste.hata !== "null" ){
                          let block = getBlock(liste.hata.trim());
                          blink(block);
                          return;
                      }
+
                      if(liste.output.length==0){
                          window.alert("Benzer kelime bulunamadı. Başka bir kelime deneyin.");
                          return;
@@ -423,11 +447,11 @@ function removeText() {
                      liste = liste.output;
                      //window.alert(liste[0]);
                      for(var i = 0; i < blocks.length; i++){
-                        var temp = blocks[i].txt;
+                        var temp = lowerFirstCase(blocks[i].txt);
 
 
                         if(temp.split("\n")[0] == liste[0] && !containsObject(inputWord, blocks)){
-                            window.alert(blocks[i].txt);
+                            window.alert(lowerFirstCase(blocks[i].txt));
                             makeBlocksShade(i);
                             // blockClick(blocks[i]);
                         }
@@ -494,7 +518,7 @@ async function makeBlocksShade(top) {
         var i;
 
         for (i = 0; i < list.length; i++){
-            var temp = blocks[i].txt;
+            var temp = lowerFirstCase(blocks[i].txt);
 
             if (temp.split("\n")[0] == obj){
             return true;

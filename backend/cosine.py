@@ -22,7 +22,8 @@ def cosine_similarity(v1, v2, vec_len):
     return sumxy/math.sqrt(sumxx*sumyy)
 
 
-
+def isExistSQL(word):
+    return "SELECT * FROM vectors where name == \'" + word.decode('utf-8') + "\'"
 
 def convert_query(words):
     temp_list = ""

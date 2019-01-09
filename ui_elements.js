@@ -167,7 +167,7 @@ function textBoxListener(evt) {
 
     if (evt.keyCode === 13) {
         findSimilarity(this.value);
-
+        // wordLabel.fill = "#ffffff";
         this.resetText();
         this.endFocus();
         this.startFocus();
