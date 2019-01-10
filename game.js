@@ -357,11 +357,13 @@ function removeText() {
     }
 
     function cleanWord(word) {
-        var punc = '.,:;~!^+%*-_?!+%&/()=?'
+        var w = word;
+        var punc = ['.',',',':','~','!','^','+','%','*','-','?','!','+','%','&','/','(',')','=','?'];
         for(let j=0;j<word.length;j++)
             for(let i=0;i<punc.length;i++)
-                word = word.replace(punc[i], '')
-        return word
+              w = w.replace(punc[i], '');
+        console.log("-", w,"-");
+        return w.trim();
     }
 
     function lower(word) {
@@ -379,8 +381,9 @@ function removeText() {
     function findSimilarity(inputWord) {
         inputWord = lower(inputWord);
         let block = null;
+        let inptt;
         for(let i=0;i<blocks.length;i++){
-            let inptt = cleanWord(inputWord.trim())
+            inptt = cleanWord(inputWord.trim())
             if(lowerFirstCase(blocks[i].txt.trim())===inptt){
                 block = blocks[i];
                 blink(block);
@@ -431,7 +434,6 @@ function removeText() {
             if (this.readyState == 4 && this.status == 200) {
                 if(xmlhttp.response != null){
                      var liste = JSON.parse(xmlhttp.response)
-                    console.log("------------------");
                     if(liste.none==="none"){
                         window.alert("Benzer kelime bulunamadı. Başka bir kelime deneyin.");
                         return;
@@ -464,12 +466,12 @@ function removeText() {
         };
         xmlhttp.open("POST", "http://0.0.0.0:5000/");
         xmlhttp.setRequestHeader("Content-Type", "application/json");
-        xmlhttp.send(JSON.stringify({word:inputWord, words:name}));
+        xmlhttp.send(JSON.stringify({word:inptt, words:name}));
 
 
         var currentWords = getCurrentWords();
 
-        var similarityList = fetchSimilarity(inputWord, currentWords);
+        var similarityList = fetchSimilarity(inptt, currentWords);
 
         startExplodeProcess(similarityList);
 

@@ -61,7 +61,7 @@ def find_all_cosine(one, all):
     result = []
 
     for i in range(len(sorted_array)-1,0,-1):
-        if(float(sorted_array[i][1]) >= 0.25):
+        if(float(sorted_array[i][1]) >= 0.15):
             result.append(sorted_array[i][0])
     return result
 
