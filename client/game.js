@@ -1,4 +1,4 @@
-
+var server = "http://34.73.227.208:5000/"
 var xmlhttp = new XMLHttpRequest();
 
 var Game = {};
@@ -464,7 +464,7 @@ function removeText() {
                 }
             }
         };
-        xmlhttp.open("POST", "http://0.0.0.0:5000/");
+        xmlhttp.open("POST", server);
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send(JSON.stringify({word:inptt, words:name}));
 
@@ -756,7 +756,7 @@ async function makeBlocksShade(top) {
     function init_words() {
 
 
-        fetch("http://0.0.0.0:5000/", {
+        fetch(server, {
             method : "GET",
             // body: new FormData(document.getElementById("inputform")),
             // -- or --

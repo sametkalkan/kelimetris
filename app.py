@@ -94,7 +94,7 @@ def post():
 
 
 if __name__ == '__main__':
-    f = open("nouns2.txt", "r")
+    f = open("nouns.txt", "r")
     words_list = f.readlines()
     f.close()
     words_list = sample(words_list, len(words_list))
